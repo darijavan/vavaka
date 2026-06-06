@@ -1,0 +1,11 @@
+# Vavaka ho an'ny firenen-drehetra — Vavaka 01
+
+O Ianao, ry Andriamanitry ny Hatsaram-panahy! Noharianao avy amin’ny fihaviana iray ihany hatrany am-boalohany ny olombelona rehetra, sitrakao fa ny olon-drehetra dia ho fianakaviana iray ihany. Eo amin’ny Fanatrehanao Masina dia mpanomponao izy ireo ary ny olombelona rehetra dia mialoka eo ambanin’ny taberinakelinao; izy rehetra dia niaraka teo amin’ny latabatry ny hamoramponao; izy rehetra dia hazavain’ny Fitahianao.
+
+Ry Andriamanitro ô! Tsara amin’ny olona rehetra Ianao. Niahy ny tsirairay Ianao, nomenao aina ny olon-drehetra. Notoloranao fahaizana sy talenta izy rehetra ary ny tsirairay tamin’izy ireo dia narotsakao tao amin’ny ranomasimben’ny famin-dramponao. Ô Ianao, ry Tompo Manasoa! Ampiraiso ny olona rehetra, ataovy izay hampifanaraka ny fivavahana, izay hampiray ny firenena, mba ho toy ny fianakavia-na iray fihaviana ary ny tany rehetra ho toy ny fonenana iray ihany. Ho afaka hiaina miaraka amin’ny firaisana sy ny fifanarahana tsara izy ireo.
+
+Ry Andriamanitro ô! Atsangano ny fanevan’ny firaisan’olombelona. Ry Andriamanitro ô! Aoreno ny Fandriampahalemana Lehibe Indrindra. Akambano ho iray ny fo. Ry Andriamanitro ô! Ô Ianao Ray Mpanasoa! Andriamanitra! Ampifalio ny fo amin’ny hanitry ny fitiavanao, ampamirapirato ny maso amin’ny fahazavan’ny fitarihanao, rotsirotsio ny sofina amin’ny antsan’ny Teninao ary arovy izahay ao amin’ny fialofan’ny fitahianao.
+
+Ianao Ilay Matanjaka, Ilay Mahery, Ilay Malemy Fanahy, Ianao Ilay Mamindra fo amin’ny fahalemen’ny zanak’olombelona rehetra.
+
+—‘Abdu’l-Bahá

@@ -1,0 +1,13 @@
+# Fifadian-kanina — Vavaka 01
+
+Dera ho Anao ry Tompo Andriamanitro ô!
+
+Mitalaho Aminao aho, noho ity Fanehoana ity  izay nanova ny haizina ho fahazavana sy nananganana ny Tempoly falehan’ny be sy ny maro amim-pahazotoana, izay nanambara ny Takelaka voasoratra sy ny namahana ary nampiharihariana ny Horonan-taratasy; mitaraina Aminao aho hampidina amiko sy ireo mpiaradia amiko, mba hahazoanay misondrotra eny amin’ny lanitry ny voninahitrao ambony indrindra ary hanadio anay amin’ny loton’ny fisalasalana izay nisakana ny olona tsy mahatoky hiditra ao amin’ny taberinakelin’ny firaisanao.
+
+Izaho ry Tompoko ô, Ilay nifikitra mafy tamin’ny rohim-pahasoavanao feno fitiavana sy izay niatsampy tamin’ny rambon’akanjon’ny famindramponao sy ny fahasoavanao. Omeo ahy ary koa ireo olon-tiako ny soan’ity tany ity sy ny any an-koatra. Omeo azy ny tolotra miafina izay natokanao ho an’ny olom-boafidinao tamin’ireo voaharinao.
+
+Indro, ry Tompoko ô, ny andro izay nandidianao ny mpanomponao hitandrina ny Fifadiana. Ho voatahy izay mifady noho ny fitiavana Anao irery ihany ary amin’ny tsy firaiketam-po tanteraka amin’izay rehetra tsy tianao. Ampio aho ary ampio izy ireo, ry Tompoko ô, hankatò Anao sy hitandrina ny didinao. Marina tokoa, manana ny fahefana hanao izay sitrakao Ianao.
+
+Tsy misy Andriamanitra hafa afa-tsy Ianao, Ilay Mahalala ny zavatra rehetra, Ilay Hendry tokoa. Ny dera rehetra anie ho Anao ry Andriamanitra, Ilay Tompon’ny olona rehetra.
+
+—Bahá'u'lláh

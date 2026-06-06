@@ -1,0 +1,11 @@
+# Mangiran-dratsy — Vavaka 01
+
+Ry Andriamanitro sy Tompoko ô! Mpanomponao aho ary zanaky ny mpanomponao. Niarina teo amin’ny fatoriako aho raha vao nangiran-dratsy raha indro ny Kintana Marainan’ny mahatokana Anao mamiratra ery amin’ny Vaomarainan’ny Sitraponao ary nanapariaka ny tarany eo amin’izao tontolo izao, araka izay nandidiana an’izany ao amin’ny Bokin’ny Didinao.
+
+Ankalazaina Ianao, ry Andriamanitro ô, noho ny nifohazanay tamin’ny hakanton’ny famirapiratry ny fahazavan’ny Fahalalanao. Arotsahy aminay, ry Tompoko ô izay hahafahanay mandà izay rehetra hafa afa-tsy Ianao ary hialanay amin’ny firaiketam-po rehetra, afa-tsy Aminao. Mandahara koa, ho ahy, sy ho an’ireo izay olona sarobidy amiko, ho an’ny fianakaviako, na lehilahy na vehivavy, ny soan’ity tany ity sy ny any an-koatra. Arovy izahay, noho izany, amin’ireo izay nataonao ho fanehoana ny fiasan’ny fanahy ratsy izay mibitsika ao anaty fon’ny olona, amin’ny alalan’ny Fiarovanao tsy mety diso, ô Ianao Ilay Malalan’ny zavaboahary rehetra ary Ilay Fanirian’izao rehetra izao. Manapahefana Ianao hanao araka izay sitrakao. Ianao marina tokoa, Ilay Mahery Indrindra, Ilay Mpamonjy amin’ny loza, Izay mampisy ny Tenany amin’ny alalan’ny Tenany ihany.
+
+Tahio, ry Tompoko Andriamanitro ô! Izay nametrahanao ambony ny anaram-boninahitra tsara indrindra ka avy Aminy no nanavahanao ny olona masina sy ny ratsy fanahy ary noho ny Halemem-Panahinao ampio izahay hanao izay Tianao sy izay Irianao. Tahio koa, ry Andriamanitro ô, ireo izay Teninao sy ireo izay Literanao ary koa ireo izay nametraka ny endriny tany Aminao, sy izay nitodika tany amin’ny Endrikao, ary nihaino ny Antsonao.
+
+Ianao marina tokoa, Ilay Tompo sy Mpanjakan’ny olon-drehetra ary manam-pahefana amin’ny zava-drehetra.
+
+—Bahá'u'lláh
