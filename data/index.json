@@ -1,0 +1,647 @@
+{
+  "categories": [
+    {
+      "category": "andro-manelanelana",
+      "name": "Andro manelanelana",
+      "prayers": [
+        {
+          "id": "andro-manelanelana-01",
+          "title": "Ry Andriamanitro ô, ry Afoko sy Fahazavako! Ity manomboka…",
+          "author": "Bahá'u'lláh"
+        }
+      ]
+    },
+    {
+      "category": "ankizy",
+      "name": "Ankizy",
+      "prayers": [
+        {
+          "id": "ankizy-01",
+          "title": "Ry Andriamanitro! Tariho aho, arovy aho, ataovy ho toy ny…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "ankizy-02",
+          "title": "Ry Andriamanitro! Beazo ireto zaza ireto. Ireto zaza ireto…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "ankizy-03",
+          "title": "Ry Andriamanitro! Tezao eo an-tratram-pitiavanao ity zaza…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "ankizy-04",
+          "title": "Ry Tompoko ô! Ry Tompoko ô! Zaza mbola tanora aho. Velomy…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "ankizy-05",
+          "title": "Andriamanitra ô! Ampianaro ireto ankizy ireto.…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "antenimiera-am-panahy",
+      "name": "Antenimiera am-panahy",
+      "prayers": [
+        {
+          "id": "antenimiera-am-panahy-01",
+          "title": "Ianao ry Tompom-pahasoavana! Ny mpanomponao izay tonga eto…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "antenimiera-am-panahy-02",
+          "title": "Raha miditra ao amin'ny efitranom-pivoriana ianareo,…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "fahafatesana",
+      "name": "Fahafatesana",
+      "prayers": [
+        {
+          "id": "fahafatesana-01",
+          "title": "Mamela ry Tompoko ô, ireo izay efa tafakatra any Aminao,…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fahafatesana-02",
+          "title": "Raha vehivavy no maty dia izao no lazaina: Ity no…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fahafatesana-03",
+          "title": "Andriamanitra Izy, Ilay Deraina, Ilay Tompon'ny…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fahafatesana-04",
+          "title": "Ry Andriamanitro ô! Ianao izay mamela heloka, izay mizara…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "fahamarinana",
+      "name": "Fahamarinana",
+      "prayers": [
+        {
+          "id": "fahamarinana-01",
+          "title": "Lazao: Ry Andriamanitra ô! Ry Andriamanitro! Satrohy ny…",
+          "author": "Bahá'u'lláh"
+        }
+      ]
+    },
+    {
+      "category": "fahasitranana",
+      "name": "Fahasitranana",
+      "prayers": [
+        {
+          "id": "fahasitranana-01",
+          "title": "Ny Anaranao no fahasitranako, ry Andriamanitro ô, ary ny…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fahasitranana-02",
+          "title": "Ry Andriamanitra, ry Andriamanitro ô!",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fahasitranana-03",
+          "title": "Ianao, ry Andriamanitro ô, no Ilay Anarana, mitondra…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fahasitranana-04",
+          "title": "Ankalazaina Ianao, ry Tompo Andriamanitro ô! Mitalaho…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fahasitranana-05",
+          "title": "Ny Anaranao no fahasitranako, ry Andriamanitro ô, ary ny…",
+          "author": "Bahá'u'lláh"
+        }
+      ]
+    },
+    {
+      "category": "famaranana-ny-fivoarian-ny-antenimiera-am-panahy",
+      "name": "Famaranana ny fivoarian'ny Antenimiera am-panahy",
+      "prayers": [
+        {
+          "id": "famaranana-ny-fivoarian-ny-antenimiera-am-panahy-01",
+          "title": "Ry Andriamanitro ô, Andriamanitro! Avy any amin'ny…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "famelan-keloka",
+      "name": "Famelan-keloka",
+      "prayers": [
+        {
+          "id": "famelan-keloka-01",
+          "title": "Ankalazaina anie ny Anaranao, ry Andriamanitro ô sy Ilay…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "famelan-keloka-02",
+          "title": "Omem-boninahitra Ianao, ry Tompo Andriamanitro ô! Miangavy…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "famelan-keloka-03",
+          "title": "Ry Tompo mpamindra fo ô! Ianao no Fieren'ny mpanomponao…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "fampianarana",
+      "name": "Fampianarana",
+      "prayers": [
+        {
+          "id": "fampianarana-01",
+          "title": "Ry Andriamanitro ô! Ianao Ilay Namorona ny Fanehoana…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fampianarana-02",
+          "title": "Deraina Ianao, ry Tompo, Andriamanitra ô!",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fampianarana-03",
+          "title": "Ianao! Ry Andriamanitra Tapitr'ohatra ô! Ianao, ry…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fampianarana-04",
+          "title": "Ry Andriamanitro ô! Andriamanitro! Na dia eo aza ny…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fampianarana-05",
+          "title": "Ry Tompo ô! Ry Tompoko! Dera sy saotra anie ho Anao izay…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fampianarana-06",
+          "title": "Ry Andriamanitra ô! Andriamanitra! Hitanao fa raiki-pitia…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fampianarana-07",
+          "title": "Ry Andriamanitra ô! Andriamanitro! Hitanao ny fahalemeko,…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fampianarana-08",
+          "title": "Dera ho Anao, ry Andriamanitro ô! Marina tokoa, ireto ny…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "fanambadiana",
+      "name": "Fanambadiana",
+      "prayers": [
+        {
+          "id": "fanambadiana-01",
+          "title": "Izy Ilay Mpangoraka, Ilay Andriamanitry ny Fahalemem-panahy…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fanambadiana-02",
+          "title": "Andriamanitra Izy! Ry Tompo Tapitr'ohatra ô! Amin'ny…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fanambadiana-03",
+          "title": "Voninahitra ho Anao, ry Andriamanitro ô! Marina tokoa, ny…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "fanampiana-sy-fanatrehana",
+      "name": "Fanampiana sy fanatrehana",
+      "prayers": [
+        {
+          "id": "fanampiana-sy-fanatrehana-01",
+          "title": "Esory ny fahasahiranako noho ny halemem-panahinao sy ny…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fanampiana-sy-fanatrehana-02",
+          "title": "O Ianao, Izay ny endrikao no fototry ny fankalazako, ny…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fanampiana-sy-fanatrehana-03",
+          "title": "Aza tsoahina ry Tompo ô ny lataba-panasana nomanina amin'ny…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fanampiana-sy-fanatrehana-04",
+          "title": "Ry Tompo! Honena izahay, omeo ny fahasoavanao izahay,…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fanampiana-sy-fanatrehana-05",
+          "title": "Izy Ilay Mpangoraka! Ilay Malemy fanahy Indrindra!",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fanampiana-sy-fanatrehana-06",
+          "title": "Ry Tompo ô, Andriamanitro, fiereko amin'ny fahavoazana.…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fanampiana-sy-fanatrehana-07",
+          "title": "Andriamanitra ô, Andriamanitra ô! Tapak'elatra ity vorona…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "fiarovana",
+      "name": "Fiarovana",
+      "prayers": [
+        {
+          "id": "fiarovana-01",
+          "title": "Omem-boninahitra Ianao, ry Tompo Andriamanitra ô! Mitalaho…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fiarovana-02",
+          "title": "Deraina Ianao, ry Andriamanitro ô! Ianao Ilay, tamin'ny…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fiarovana-03",
+          "title": "Ry Tompoko ô! Fantatrao fa voahodidin'ny fijaliana sy ny…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fiarovana-04",
+          "title": "Ry Andriamanitra Mpangoraka! Fisaorana no atolotra Anao,…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fiarovana-05",
+          "title": "Andriamanitra ô, Ry Andriamanitro ô, Arovy ireo mpanomponao…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fiarovana-06",
+          "title": "Aza esorina aminay Tompo ô, ny latabatry ny fanasana…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "fiderana-sy-fisaorana",
+      "name": "Fiderana sy fisaorana",
+      "prayers": [
+        {
+          "id": "fiderana-sy-fisaorana-01",
+          "title": "Ry Andriamanitro, Mamiko indrindra, Mpanjakako, Faniriako!…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fiderana-sy-fisaorana-02",
+          "title": "Ambarao : Voninahitra ho Anao, izay nahatonga ny olomasina…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fiderana-sy-fisaorana-03",
+          "title": "Ny fiderana rehetra anie ho Anao, ry Andriamanitro ô, Ilay…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "fiderana-sy-fisaorana-04",
+          "title": "Amin'ny Anaran'ny Tompo, Ilay Tapitr'ohatra! Deraina sy…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fiderana-sy-fisaorana-05",
+          "title": "Izy no Andriamanitra ! Andriamanitra ô, hitanao izahay…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "fiderana-sy-fisaorana-06",
+          "title": "Izy no Andriamanitra ! Tompo ô, amin'ny fomba ahoana no…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "fifadian-kanina",
+      "name": "Fifadian-kanina",
+      "prayers": [
+        {
+          "id": "fifadian-kanina-01",
+          "title": "Dera ho Anao ry Tompo Andriamanitro ô!",
+          "author": "Bahá'u'lláh"
+        }
+      ]
+    },
+    {
+      "category": "firaisankina",
+      "name": "Firaisankina",
+      "prayers": [
+        {
+          "id": "firaisankina-01",
+          "title": "Ry Andriamanitro ô! Ry Andriamanitro ô!",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "firaisankina-02",
+          "title": "Anao ny voninahitra, ry Andriamanitro ô, ary anao ny laza,…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "firaisankina-03",
+          "title": "Ry Andriamanitro ô! Ry Andriamanitro! Marina tokoa, miantso…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "fivahinianana-masina",
+      "name": "Fivahinianana masina",
+      "prayers": [
+        {
+          "id": "fivahinianana-masina-01",
+          "title": "Atao ity rehefa manoloana ny Fasan'I Abdu'l Bahà; atao…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "fivoriana",
+      "name": "Fivoriana",
+      "prayers": [
+        {
+          "id": "fivoriana-01",
+          "title": "Ianao, Andriamanitry ny famindrampo ô! Ianao Ilay Mahefa sy…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "hariva",
+      "name": "Hariva",
+      "prayers": [
+        {
+          "id": "hariva-01",
+          "title": "Ry Andriamanitro ô, Mpampianatro, Anton'ny faniriako! Ity…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "hariva-02",
+          "title": "Nahoana aho, no hisafidy ny hatory, ry Andriamanitra, ry…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "hariva-03",
+          "title": "Ry Andriamanitra Tompoko ô, antom-paniriako Ianao !",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "hariva-04",
+          "title": "Andriamanitra ô, Andriamanitro,",
+          "author": "Bahá'u'lláh"
+        }
+      ]
+    },
+    {
+      "category": "mangiran-dratsy",
+      "name": "Mangiran-dratsy",
+      "prayers": [
+        {
+          "id": "mangiran-dratsy-01",
+          "title": "Ry Andriamanitro sy Tompoko ô! Mpanomponao aho ary zanaky…",
+          "author": "Bahá'u'lláh"
+        }
+      ]
+    },
+    {
+      "category": "maraina",
+      "name": "Maraina",
+      "prayers": [
+        {
+          "id": "maraina-01",
+          "title": "Nifoha aho anio maraina, nohon'ny Fahasoavanao, ry…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "maraina-02",
+          "title": "Manolotra Fiderana Anao aho, ry Andriamanitro ô, noho ny…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "maraina-03",
+          "title": "Tao anatin'ny Fialofanao no nifohazako, ry Andriamanitro ô,…",
+          "author": "Bahá'u'lláh"
+        }
+      ]
+    },
+    {
+      "category": "martiora",
+      "name": "Martiora",
+      "prayers": [
+        {
+          "id": "martiora-01",
+          "title": "Raha hanao ity tonom-bavaka ity, izay averina in-tsivy (9)…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "martiora-02",
+          "title": "Maro tokoa ireo fo nangatsiaka kanefa niredareda indray…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "martiora-03",
+          "title": "Izy no ilay Mpamindra fo, ilay Andriamanitry ny fitiavana…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "naw-ruz",
+      "name": "Naw-Rúz",
+      "prayers": [
+        {
+          "id": "naw-ruz-01",
+          "title": "Deraina Ianao, ry Andriamanitro ô, noho ny nanaovanao ny…",
+          "author": "Bahá'u'lláh"
+        }
+      ]
+    },
+    {
+      "category": "sedra-sy-fahasahiranana",
+      "name": "Sedra sy fahasahiranana",
+      "prayers": [
+        {
+          "id": "sedra-sy-fahasahiranana-01",
+          "title": "Ianao, Izay nanao ny fitsapàna ho fanafody mahasoa ho…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "sedra-sy-fahasahiranana-02",
+          "title": "Voninahitra ho Anao, ry Andriamanitro ô!",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "sedra-sy-fahasahiranana-03",
+          "title": "Iza moa afatsy Andriamanitra no mahavonjy amin'ny sarotra?",
+          "author": "Báb"
+        },
+        {
+          "id": "sedra-sy-fahasahiranana-04",
+          "title": "Lazao: Andriamanitra dia ampy amin'ny zavatra rehetra,…",
+          "author": "Báb"
+        },
+        {
+          "id": "sedra-sy-fahasahiranana-05",
+          "title": "Amin'ny Anaran'ny Tompo, Ilay Mpandresy ny Mpandresy…",
+          "author": "Báb"
+        },
+        {
+          "id": "sedra-sy-fahasahiranana-06",
+          "title": "Mitalaho Aminao aho Andriamanitra ô, noho ny Herinao…",
+          "author": "Báb"
+        }
+      ]
+    },
+    {
+      "category": "takelak-i-ahmad",
+      "name": "Takelak'i Ahmad",
+      "prayers": [
+        {
+          "id": "takelak-i-ahmad-01",
+          "title": "Izy no Mpanjaka, Ilay Mpahalala ny zavatra rehetra, Ilay…",
+          "author": "Bahá'u'lláh"
+        }
+      ]
+    },
+    {
+      "category": "takela-pahatsiarovana",
+      "name": "Takela pahatsiarovana",
+      "prayers": [
+        {
+          "id": "takela-pahatsiarovana-01",
+          "title": "Ny fiderana avy aminao Andriamanitra mendrika ho hajaina sy…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "takela-pahatsiarovana-02",
+          "title": "Izy Ilay tena be Voninahitra.",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "toetra-ara-panahy",
+      "name": "Toetra ara-panahy",
+      "prayers": [
+        {
+          "id": "toetra-ara-panahy-01",
+          "title": "Ry Tompoko ô! Ataovy sakafoko ny hatsaran'ny Endrikao, ary…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "toetra-ara-panahy-02",
+          "title": "Andriamanitra ô, noho ny herinao sy ny fahefanao izay…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "toetra-ara-panahy-03",
+          "title": "Amorony fo madio ao anatiko aho, ry Andriamanitro ô, ary…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "toetra-ara-panahy-04",
+          "title": "Ho Anao ny fiderana, ry Tompo Andriamanitro ô! Mitalaho…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "toetra-ara-panahy-05",
+          "title": "Eo amin'ny alon-dranonao mamerovero mandrakizay, avelao aho…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "toetra-ara-panahy-06",
+          "title": "Omem-boninahitra Ianao, ry Tompo Andriamanitro ô! Misaotra…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "toetra-ara-panahy-07",
+          "title": "Voninahitra ho Anao, Ianao izay Tompon'izao rehetra izao sy…",
+          "author": "Bahá'u'lláh"
+        },
+        {
+          "id": "toetra-ara-panahy-08",
+          "title": "Ry Tompoko ô! Ry Tompoko ô! Ity misy jiro iray nirehitra…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "toetra-ara-panahy-09",
+          "title": "Ry Tompoko ô, Malalako, Faniriako! Tohany aho ao amin'ny…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "toetra-ara-panahy-10",
+          "title": "Ry Andriamanitro ô! Ry Andriamanitro ô!",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "toetra-ara-panahy-11",
+          "title": "Ry Andriamanitra! Andriamanitro! Arovy ny mpanomponao…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "toetra-ara-panahy-12",
+          "title": "Ry Andriamanitra! Velombelomy sy ampiravoravoy ny saiko.…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "toetra-ara-panahy-13",
+          "title": "Ry Andriamanitro ô, Andriamanitro! Fanantenako Ianao ary…",
+          "author": "'Abdu'l-Bahá"
+        },
+        {
+          "id": "toetra-ara-panahy-14",
+          "title": "Hamafiso ny dianay, ry Tompo ô, eo amin'ny lalanao ary…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    },
+    {
+      "category": "vavaka-fahasitranana-lava",
+      "name": "Vavaka fahasitranana lava",
+      "prayers": [
+        {
+          "id": "vavaka-fahasitranana-lava-01",
+          "title": "Izy no ilay Mpanasitrana, Ilay mahampy sy mamonjy ny…",
+          "author": "Bahá'u'lláh"
+        }
+      ]
+    },
+    {
+      "category": "vavaka-ho-an-ny-firenen-drehetra",
+      "name": "Vavaka ho an'ny firenena drehetra",
+      "prayers": [
+        {
+          "id": "vavaka-ho-an-ny-firenen-drehetra-01",
+          "title": "O Ianao, ry Andriamanitry ny Hatsaram-panahy! Noharianao…",
+          "author": "'Abdu'l-Bahá"
+        }
+      ]
+    }
+  ]
+}

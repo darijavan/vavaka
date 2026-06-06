@@ -1,0 +1,122 @@
+[
+  {
+    "id": "maraina-01",
+    "title": "Nifoha aho anio maraina, nohon'ny Fahasoavanao, ry…",
+    "category": "maraina",
+    "author": "Bahá'u'lláh",
+    "notes": null,
+    "transliteration": null,
+    "content": {
+      "schema": "dast",
+      "document": {
+        "type": "root",
+        "children": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Nifoha aho anio maraina, nohon'ny Fahasoavanao, ry Andriamanitro ô ary nandao ny akaniko amim-pahatokiana tanteraka Anao, ary manankina tanteraka ny tenako amin'ny Fikarakaranao. Arotsahy amiko, avy any an-danitry ny Famindramponao, ny tsodrano avy Aminao ary mamelà ahy hiverina soa aman-tsara any amin'ny fonenako toy izay namelanao ahy hiala teo ambanin'ny Fiarovanao, miaraka amin'ireo fisainako mifantoka mafy eny Aminao."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Tsy misy Andriamanitra hafa afatsy Ianao, Ilay Tokana, Ilay Tsy Manan-tsahala, Ilay Mpahalala ny zavatra rehetra, Ilay Hendry indrindra."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "maraina-02",
+    "title": "Manolotra Fiderana Anao aho, ry Andriamanitro ô, noho ny…",
+    "category": "maraina",
+    "author": "Bahá'u'lláh",
+    "notes": null,
+    "transliteration": null,
+    "content": {
+      "schema": "dast",
+      "document": {
+        "type": "root",
+        "children": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Manolotra Fiderana Anao aho, ry Andriamanitro ô, noho ny namohazanao ahy tamin'ny torimasoko sy nanomezanao ahy indray saina aman'eritreritra ary nitsanganako tamin'ny faharendrehana. Nifoha aho anio maraina, ny endriko nitodika any amin'ny famirapiratry ny Kintana Marainan'ny Fanambaranao izay amin'ny alalànany ny lanitry ny Herinao sy ny Voninahitrao dia voazava, niaiky ny Marikao, nino ny Bokinao ary niraiki-pitia fatratra tamin'ny Tadinao."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Mitalaho Aminao aho, amin'ny alalan'ny herin'ny Sitraponao sy ny fahefan'ny Fikasanao tsy hay toherina, mba hanaovanao izay nambaranao tamiko nandritry ny torimasoko ho fototra tena marina ho an'ny fonenan'ny Fitiavanao, izay latsa-paka ao anatin'ny fon'ireo olon-tianao, ary koa ho fitaovana tsara indrindra ho an'ny fanehoana ny mariky ny Fahasoavanao sy ny Hatsaranao be fitiavana."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Aoka ho didianao ho ahy, amin'ny alalan'ny Peninao ambony indrindra, Ry Tompoko ô, ny soan'izao tontolo izao sy ny any an-koatra. Vavolombelona aho fa voafihina eo Ampelatananao ny fanapahana ny zavatra rehetra. Manova azy ireo Ianao araka izay tianao. Tsy misy Andriamanitra hafa afa-tsy Ianao, Ilay Mahery, Ilay Tsy mivadika."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Ianao no Ilay izay nanova araka ny fandaharanao ny fahambaniana ho voninahitra, ny falemena ho hery, ny fahosàna ho fahatanjahana, ny tahotra ho fahatoniana ary ny fisalasalana ho fahatokisana. Tsy misy Andriamanitra hafa afa-tsy Ianao, Ilay Mahery, Ilay Mahasoa."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Tsy mandiso fanantenana na iza na iza Ianao amin'ireo izay mitady Anao ary tsy mampiataka na iray aza tamin'ireo izay naniry Anao Ianao. Manapaha ho ahy izay mendrika ny Fahalalantananao sy ny ranoma-simben'ny Hatsaramponao. Ianao marina tokoa, Ilay Manampahefana, Ilay Mahery indrindra."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "maraina-03",
+    "title": "Tao anatin'ny Fialofanao no nifohazako, ry Andriamanitro ô,…",
+    "category": "maraina",
+    "author": "Bahá'u'lláh",
+    "notes": null,
+    "transliteration": null,
+    "content": {
+      "schema": "dast",
+      "document": {
+        "type": "root",
+        "children": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Tao anatin'ny Fialofanao no nifohazako, ry Andriamanitro ô, ary mendrika an'izay mitady izany Fialofana izany ny honina ao amin'ny Fitoerana Masin'ny fiarovanao sy ao anatin'ny Manda-piarovan'ny Fiambenanao. Hazavao ny ati-panahiko, ry Tompoko ô, amin'ny Famirapiratry ny Fiposaky ny Andron'ny Fanambaranao toy izay nanazavanao ny tenako rehetra tamin'ny tana-masoandro marainan'ny Fahasoavanao."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

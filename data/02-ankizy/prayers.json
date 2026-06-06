@@ -1,0 +1,181 @@
+[
+  {
+    "id": "ankizy-01",
+    "title": "Ry Andriamanitro! Tariho aho, arovy aho, ataovy ho toy ny…",
+    "category": "ankizy",
+    "author": "'Abdu'l-Bahá",
+    "notes": null,
+    "transliteration": null,
+    "content": {
+      "schema": "dast",
+      "document": {
+        "type": "root",
+        "children": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Ry Andriamanitro! Tariho aho, arovy aho, ataovy ho toy ny fanaovanjiro hanazava sy ho kintana mamirapiratra aho."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Ianao Ilay Mahery, Ilay Manam-pahefana."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "ankizy-02",
+    "title": "Ry Andriamanitro! Beazo ireto zaza ireto. Ireto zaza ireto…",
+    "category": "ankizy",
+    "author": "'Abdu'l-Bahá",
+    "notes": null,
+    "transliteration": null,
+    "content": {
+      "schema": "dast",
+      "document": {
+        "type": "root",
+        "children": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Ry Andriamanitro! Beazo ireto zaza ireto. Ireto zaza ireto no volin'ny tanim-boankazonao, voninkazon'ny lohasahanao, raozin'ny tanimbolinao."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Aoka ny oranao hirotsaka aminy; aoka ny Masoandron'ny Fahamarinana hamirapiratra amin'izy ireo noho ny fitiavanao. Aoka hamelombelona azy ireo ny tsioka malefakao mba hanabe,hampitombo sy hampivelatra azy ireo ary hiseho amin'ny hatsarana tonga lafatra indrindra."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Ianao Ilay Mpanome! Ianao Ilay Mamindra fo!"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "ankizy-03",
+    "title": "Ry Andriamanitro! Tezao eo an-tratram-pitiavanao ity zaza…",
+    "category": "ankizy",
+    "author": "'Abdu'l-Bahá",
+    "notes": null,
+    "transliteration": null,
+    "content": {
+      "schema": "dast",
+      "document": {
+        "type": "root",
+        "children": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Ry Andriamanitro! Tezao eo an-tratram-pitiavanao ity zaza menavava ity ary omeo azy ny ronono avy amin'ny tratran'ny Fitahianao. Kolokoloy ity voly tanora ity ao amin'ny tanindraozin'ny Fitiavanao ary tahio hitombo amin'ny andon-danitry ny Fitahianao."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Ataovy zanaky ny Fanjakanao izy ary tariho ho eny amin'ny Toeran-danitra misy Anao. Mahery sy tsara Ianao, Ianao Ilay Mpanome, Ilay Malala-tanana, Ilay Tompon'ny fanambinana, tapitr'ohatra."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "ankizy-04",
+    "title": "Ry Tompoko ô! Ry Tompoko ô! Zaza mbola tanora aho. Velomy…",
+    "category": "ankizy",
+    "author": "'Abdu'l-Bahá",
+    "notes": null,
+    "transliteration": null,
+    "content": {
+      "schema": "dast",
+      "document": {
+        "type": "root",
+        "children": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Ry Tompoko ô! Ry Tompoko ô! Zaza mbola tanora aho. Velomy amin'ny tratran'ny famindramponao aho, tezao amin'ny fitiavanao, ampianaro ao amin'ny sekolim-pitarihanao ary ataovy izay hitomboako eo ambanin'ny aloky ny hatsaranao."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Afaho amin'ny haizina aho, ataovy ho fahazavana mamirapiratra aho, arovy amin'ny fahoriana, ataovy voninkazon'ny tanin-draozinao, ekeo izay hahatonga ahy hanompo ny Toeranao masina ary omeo ahy ny fepetra sy toetra hahatonga ahy ho olombanona; ataovy ho vokatry ny hatsarana eo amin'ny tontolon'olombelona aho, ary satrohy ny diademan'ny fiainana mandrakizay."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Marina tokoa, Ianao Ilay Mahery, Ilay Tsitoha, Izay mahita sy mahare."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "ankizy-05",
+    "title": "Andriamanitra ô! Ampianaro ireto ankizy ireto.…",
+    "category": "ankizy",
+    "author": "'Abdu'l-Bahá",
+    "notes": null,
+    "transliteration": null,
+    "content": {
+      "schema": "dast",
+      "document": {
+        "type": "root",
+        "children": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Andriamanitra ô! Ampianaro ireto ankizy ireto. Zana-kazon'ny sahanao, voninkazo ny tanin'ahitrao, raozin'ny zaridainanao izy ireo. Ho tondrahan'ny ranon'oranao izy ireo ary ny masoandron'ny maha-Ianao anao no hamiratra ao amin'izy ireo. Aoka izy ireo hahitsy lalan-kodiavina, noho ny tsioka mamelombelona alefanao, ho afaka hitombo sy hivelatra tsara ka ho fanehoan'ny endriky ny hatsaranao tsy misy pentina. Ianao no ilay Mpanome, ilay Be Indrafo."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

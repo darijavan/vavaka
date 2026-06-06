@@ -1,0 +1,36 @@
+[
+  {
+    "id": "fahamarinana-01",
+    "title": "Lazao: Ry Andriamanitra ô! Ry Andriamanitro! Satrohy ny…",
+    "category": "fahamarinana",
+    "author": "Bahá'u'lláh",
+    "notes": null,
+    "transliteration": null,
+    "content": {
+      "schema": "dast",
+      "document": {
+        "type": "root",
+        "children": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Lazao: Ry Andriamanitra ô! Ry Andriamanitro! Satrohy ny satro-boninahitry ny fahamarinana ny lohako ary ny fanamian'ny fahitsiana ny tempoliko."
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "type": "span",
+                "value": "Ianao, marina tokoa, Ilay Tompon'ny Fahaizana sy ny Fangorahana rehetra."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]
