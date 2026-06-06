@@ -67,25 +67,6 @@ Authors are either **Bahá'u'lláh**, **'Abdu'l-Bahá**, or **The Báb**.
 
 ---
 
-## Next step
-
-Normalise all Markdown files into a single canonical JSON dataset under `data/prayers.json`
-(or one JSON file per category). Target schema:
-
-```json
-{
-  "id": "string",
-  "title": "string",
-  "category": "string",
-  "text": "string",
-  "transliteration": null
-}
-```
-
-This JSON will be bundled as a Flutter asset and loaded at app startup.
-
----
-
 ## Contributing
 
 - Encoding: UTF-8. Preserve all accented Malagasy characters exactly.

@@ -12,9 +12,6 @@ targeting Android and iOS. The v1 codebase was lost; this repo is the result of 
 prayer texts were extracted from the original APK (via ADB + apktool) and converted into structured
 Markdown files grouped by category. This dataset is the source of truth for the new Flutter app.
 
-**Status:** Phase 0 extraction is complete. The next step is to normalise the Markdown files into a
-canonical JSON dataset before Flutter development begins.
-
 ---
 
 ## Repository layout
@@ -33,24 +30,15 @@ Do not rename folders or change numbering without explicit instruction.
 
 ---
 
-## Immediate next task
+## Notion workspace
 
-Normalise all prayer data into structured JSON.
+The authoritative project spec and task list live in Notion. Always check these before starting any
+significant piece of work — they describe the current phase, remaining tasks, and acceptance criteria.
 
-Target schema for each prayer entry:
+- **Project page:** https://app.notion.com/p/36489229f0a681268a6ac0fb2a05a95d
+- **Task board** (inline on that page): lists all Phase 0–5 tasks with status checkboxes
 
-```json
-{
-  "id": "string",
-  "title": "string",
-  "category": "string",
-  "text": "string",
-  "transliteration": "string | null"
-}
-```
-
-The generated JSON files should live under `/data` and will become the Flutter app's asset bundle.
-This JSON dataset is the **source of truth** — accuracy matters more than speed.
+Always check the Notion task board for the current phase and open tasks before starting work.
 
 ---
 
