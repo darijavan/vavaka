@@ -50,6 +50,18 @@ Keep Notion task state aligned with actual project progress whenever it is meani
 
 ---
 
+## Figma design file
+
+The app design source lives in Figma:
+
+- **Design file:** https://www.figma.com/design/AxL3CeyvK74aE1Nz5RXrvy/Vavaka-Baha%CC%81%CA%BCi%CC%81?m=auto&t=50vCbudRmcyULcRH-6
+
+Use this file for mobile UI design work, visual references, wireframes, and implementation handoff.
+When creating or updating screens, keep them editable in Figma and note meaningful design progress in
+the Notion task board.
+
+---
+
 ## Working conventions
 
 - All source content is in Malagasy. Preserve the original text exactly; do not translate or paraphrase
