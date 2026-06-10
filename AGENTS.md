@@ -40,6 +40,14 @@ significant piece of work — they describe the current phase, remaining tasks, 
 
 Always check the Notion task board for the current phase and open tasks before starting work.
 
+Keep Notion task state aligned with actual project progress whenever it is meaningful to do so:
+
+- When a task is completed and verified, update its task board entry to the appropriate done/completed status.
+- When work advances enough to change the immediate next step, mark or create the next task to tackle so the board reflects the current handoff point.
+- When the project timeline changes, set or adjust deadlines based on the current state of the work instead of leaving stale due dates in place.
+- Add concise task notes when useful to preserve context, such as verification performed, blockers found, or assumptions behind a new deadline.
+- Do not mark tasks complete speculatively. If Notion access is unavailable or the correct task/status is ambiguous, mention that in the handoff instead of guessing.
+
 ---
 
 ## Working conventions
