@@ -86,6 +86,10 @@ The data in this repo feeds a Flutter app with the following planned screens:
 State management: Riverpod or Provider. Navigation: go_router.
 This context is useful when deciding how to structure the JSON schema.
 
+Flutter UI convention: use `flutter_hooks` for screen and component lifecycle/local state. Prefer
+`HookWidget` for hook-driven widgets, and `HookConsumerWidget` when Riverpod is introduced. Keep
+domain models and repositories independent of Flutter hooks.
+
 ---
 
 ## Commit style

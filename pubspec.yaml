@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_hooks: ^0.21.3+1
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -56,6 +58,37 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - data/index.json
+    - data/01-andro-manelanelana/prayers.json
+    - data/02-ankizy/prayers.json
+    - data/03-antenimiera-am-panahy/prayers.json
+    - data/04-fahafatesana/prayers.json
+    - data/05-fahamarinana/prayers.json
+    - data/06-fahasitranana/prayers.json
+    - data/07-famaranana-ny-fivoarian-ny-antenimiera-am-panahy/prayers.json
+    - data/08-famelan-keloka/prayers.json
+    - data/09-fampianarana/prayers.json
+    - data/10-fanambadiana/prayers.json
+    - data/11-fanampiana-sy-fanatrehana/prayers.json
+    - data/12-fiarovana/prayers.json
+    - data/13-fiderana-sy-fisaorana/prayers.json
+    - data/14-fifadian-kanina/prayers.json
+    - data/15-firaisankina/prayers.json
+    - data/16-fivahinianana-masina/prayers.json
+    - data/17-fivoriana/prayers.json
+    - data/18-hariva/prayers.json
+    - data/19-mangiran-dratsy/prayers.json
+    - data/20-maraina/prayers.json
+    - data/21-martiora/prayers.json
+    - data/22-naw-ruz/prayers.json
+    - data/23-sedra-sy-fahasahiranana/prayers.json
+    - data/24-takelak-i-ahmad/prayers.json
+    - data/25-takela-pahatsiarovana/prayers.json
+    - data/26-toetra-ara-panahy/prayers.json
+    - data/27-vavaka-fahasitranana-lava/prayers.json
+    - data/28-vavaka-ho-an-ny-firenen-drehetra/prayers.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:
