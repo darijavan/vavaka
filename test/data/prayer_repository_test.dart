@@ -30,6 +30,14 @@ void main() {
       }
     });
 
+    test('finds a category by its stable recovered slug', () async {
+      final category = await PrayerRepository().findCategoryBySlug('ankizy');
+
+      expect(category.name, 'Ankizy');
+      expect(category.prayerCount, 5);
+      expect(category.prayers.first.id, 'ankizy-01');
+    });
+
     test('finds a prayer by its stable recovered ID', () async {
       final prayer = await PrayerRepository().findPrayerById('ankizy-01');
 
