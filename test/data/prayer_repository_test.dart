@@ -1,5 +1,21 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vavaka/data/prayer_repository.dart';
+
+class _ThrowOnceAssetBundle extends CachingAssetBundle {
+  var _loadCount = 0;
+
+  @override
+  Future<ByteData> load(String key) => rootBundle.load(key);
+
+  @override
+  Future<String> loadString(String key, {bool cache = true}) async {
+    if (_loadCount++ == 0) {
+      throw StateError('First load fails');
+    }
+    return rootBundle.loadString(key, cache: cache);
+  }
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +61,14 @@ void main() {
       expect(prayer!.category, 'ankizy');
       expect(prayer.author, "'Abdu'l-Bahá");
       expect(prayer.paragraphs, hasLength(2));
+    });
+
+    test('retries category loading after an initial asset failure', () async {
+      final repository = PrayerRepository(assetBundle: _ThrowOnceAssetBundle());
+
+      await expectLater(repository.loadCategories(), throwsStateError);
+
+      expect(await repository.loadCategories(), hasLength(28));
     });
   });
 }

@@ -14,8 +14,23 @@ class PrayerRepository {
   final AssetBundle _assetBundle;
   Future<List<PrayerCategory>>? _categoriesFuture;
 
-  Future<List<PrayerCategory>> loadCategories() async {
-    return _categoriesFuture ??= _loadCategoriesFromAssets();
+  Future<List<PrayerCategory>> loadCategories() {
+    final cached = _categoriesFuture;
+    if (cached != null) {
+      return cached;
+    }
+
+    final future = _loadCategoriesFromAssets();
+    _categoriesFuture = future;
+    future.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {
+        if (identical(_categoriesFuture, future)) {
+          _categoriesFuture = null;
+        }
+      },
+    );
+    return future;
   }
 
   Future<List<PrayerCategory>> _loadCategoriesFromAssets() async {

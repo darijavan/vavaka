@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
 import 'data/models/prayer.dart';
@@ -111,7 +112,7 @@ class CategoryListScreen extends StatelessWidget {
   }
 }
 
-class CategoryDetailScreen extends StatelessWidget {
+class CategoryDetailScreen extends HookWidget {
   const CategoryDetailScreen({
     super.key,
     required this.repository,
@@ -123,8 +124,12 @@ class CategoryDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final future = useMemoized(() => repository.findCategoryBySlug(slug), [
+      repository,
+      slug,
+    ]);
     return FutureBuilder<PrayerCategory>(
-      future: repository.findCategoryBySlug(slug),
+      future: future,
       builder: (context, snapshot) {
         final title = snapshot.data?.name ?? 'Vavaka';
         return Scaffold(
@@ -165,7 +170,7 @@ class CategoryDetailScreen extends StatelessWidget {
   }
 }
 
-class PrayerDetailScreen extends StatelessWidget {
+class PrayerDetailScreen extends HookWidget {
   const PrayerDetailScreen({
     super.key,
     required this.repository,
@@ -177,8 +182,12 @@ class PrayerDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final future = useMemoized(() => repository.findPrayerById(prayerId), [
+      repository,
+      prayerId,
+    ]);
     return FutureBuilder<Prayer?>(
-      future: repository.findPrayerById(prayerId),
+      future: future,
       builder: (context, snapshot) {
         final prayer = snapshot.data;
         return Scaffold(

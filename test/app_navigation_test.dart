@@ -1,10 +1,24 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vavaka/data/models/prayer_category.dart';
+import 'package:vavaka/data/prayer_repository.dart';
 import 'package:vavaka/main.dart';
 
-Future<void> pumpUntilLoaded(WidgetTester tester) async {
-  for (var i = 0; i < 30; i++) {
-    await tester.pump(const Duration(milliseconds: 100));
+class _MissingCategoryRepository extends PrayerRepository {
+  @override
+  Future<PrayerCategory> findCategoryBySlug(String slug) {
+    return Future.error(FormatException('Unknown prayer category: $slug'));
   }
+}
+
+Future<void> pumpUntil(WidgetTester tester, Finder finder) async {
+  for (var i = 0; i < 100; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+    if (finder.evaluate().isNotEmpty) {
+      return;
+    }
+  }
+  fail('Timed out waiting for $finder');
 }
 
 void main() {
@@ -12,25 +26,45 @@ void main() {
 
   testWidgets('navigates from category list to prayer detail', (tester) async {
     await tester.pumpWidget(const MyApp());
-    await pumpUntilLoaded(tester);
+    await pumpUntil(tester, find.text('Ankizy'));
 
     expect(find.text('Vavaka'), findsWidgets);
     expect(find.text('Andro manelanelana'), findsOneWidget);
     expect(find.text('Ankizy'), findsOneWidget);
 
     await tester.tap(find.text('Ankizy'));
-    await pumpUntilLoaded(tester);
+    final prayerTile = find.textContaining('Ry Andriamanitro! Tariho aho');
+    await pumpUntil(tester, prayerTile);
 
     expect(find.text('Ankizy'), findsWidgets);
-    final prayerTile = find.textContaining('Ry Andriamanitro! Tariho aho');
     expect(prayerTile, findsOneWidget);
     expect(find.text("'Abdu'l-Bahá"), findsWidgets);
 
     await tester.tap(prayerTile);
-    await pumpUntilLoaded(tester);
+    await pumpUntil(tester, find.textContaining('fanaovanjiro hanazava'));
 
     expect(find.textContaining('Ry Andriamanitro! Tariho aho'), findsWidgets);
-    expect(find.text("'Abdu'l-Bahá"), findsOneWidget);
+    expect(find.text("'Abdu'l-Bahá"), findsWidgets);
     expect(find.textContaining('fanaovanjiro hanazava'), findsOneWidget);
+  });
+
+  testWidgets('shows an error for an unknown category', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CategoryDetailScreen(
+          repository: _MissingCategoryRepository(),
+          slug: 'does-not-exist',
+        ),
+      ),
+    );
+    await pumpUntil(
+      tester,
+      find.textContaining('Unknown prayer category: does-not-exist'),
+    );
+
+    expect(
+      find.textContaining('Unknown prayer category: does-not-exist'),
+      findsOneWidget,
+    );
   });
 }
