@@ -46,6 +46,16 @@ void main() {
     expect(find.textContaining('Ry Andriamanitro! Tariho aho'), findsWidgets);
     expect(find.text("'Abdu'l-Bahá"), findsWidgets);
     expect(find.textContaining('fanaovanjiro hanazava'), findsOneWidget);
+
+    final paragraph = find.textContaining('fanaovanjiro hanazava');
+    Text paragraphText() => tester.widget<Text>(paragraph);
+
+    expect(paragraphText().style?.fontSize, 18);
+    final increaseButton = find.byTooltip('Increase text size');
+    await tester.ensureVisible(increaseButton);
+    await tester.tap(increaseButton);
+    await tester.pump();
+    expect(paragraphText().style?.fontSize, 20);
   });
 
   testWidgets('shows an error for an unknown category', (tester) async {
@@ -67,4 +77,5 @@ void main() {
       findsOneWidget,
     );
   });
+
 }

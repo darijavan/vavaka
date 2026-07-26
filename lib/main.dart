@@ -180,8 +180,13 @@ class PrayerDetailScreen extends HookWidget {
   final PrayerRepository repository;
   final String prayerId;
 
+  static const _minimumFontSize = 14.0;
+  static const _maximumFontSize = 32.0;
+  static const _fontSizeStep = 2.0;
+
   @override
   Widget build(BuildContext context) {
+    final fontSize = useState(18.0);
     final future = useMemoized(() => repository.findPrayerById(prayerId), [
       repository,
       prayerId,
@@ -191,14 +196,44 @@ class PrayerDetailScreen extends HookWidget {
       builder: (context, snapshot) {
         final prayer = snapshot.data;
         return Scaffold(
-          appBar: AppBar(title: Text(prayer?.title ?? 'Vavaka')),
-          body: _buildBody(snapshot),
+          appBar: AppBar(
+            title: Text(
+              prayer?.title ?? 'Vavaka',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          body: _buildBody(snapshot, fontSize: fontSize.value),
+          bottomNavigationBar: SafeArea(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  tooltip: 'Decrease text size',
+                  onPressed: prayer != null && fontSize.value > _minimumFontSize
+                      ? () => fontSize.value -= _fontSizeStep
+                      : null,
+                  icon: const Icon(Icons.text_decrease),
+                ),
+                IconButton(
+                  tooltip: 'Increase text size',
+                  onPressed: prayer != null && fontSize.value < _maximumFontSize
+                      ? () => fontSize.value += _fontSizeStep
+                      : null,
+                  icon: const Icon(Icons.text_increase),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
 
-  Widget _buildBody(AsyncSnapshot<Prayer?> snapshot) {
+  Widget _buildBody(
+    AsyncSnapshot<Prayer?> snapshot, {
+    required double fontSize,
+  }) {
     if (snapshot.hasError) {
       return _ErrorMessage(error: snapshot.error!);
     }
@@ -222,7 +257,7 @@ class PrayerDetailScreen extends HookWidget {
         ),
         const SizedBox(height: 24),
         for (final paragraph in prayer.paragraphs) ...[
-          Text(paragraph, style: const TextStyle(fontSize: 18, height: 1.5)),
+          Text(paragraph, style: TextStyle(fontSize: fontSize, height: 1.5)),
           const SizedBox(height: 16),
         ],
       ],
