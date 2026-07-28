@@ -11,6 +11,22 @@ class _MissingCategoryRepository extends PrayerRepository {
   }
 }
 
+class _RetryingCategoryRepository extends PrayerRepository {
+  var attempts = 0;
+
+  @override
+  Future<List<PrayerCategory>> loadCategories() {
+    attempts++;
+    if (attempts == 1) {
+      return Future.error(const FormatException('Temporary asset failure'));
+    }
+
+    return Future.value([
+      PrayerCategory(slug: 'retry', name: 'Loaded categories', prayers: []),
+    ]);
+  }
+}
+
 Future<void> pumpUntil(WidgetTester tester, Finder finder) async {
   for (var i = 0; i < 100; i++) {
     await tester.pump(const Duration(milliseconds: 100));
@@ -46,6 +62,21 @@ void main() {
     expect(find.textContaining('Ry Andriamanitro! Tariho aho'), findsWidgets);
     expect(find.text("'Abdu'l-Bahá"), findsWidgets);
     expect(find.textContaining('fanaovanjiro hanazava'), findsOneWidget);
+  });
+
+  testWidgets('retries category loading after an error', (tester) async {
+    final repository = _RetryingCategoryRepository();
+
+    await tester.pumpWidget(
+      MaterialApp(home: CategoryListScreen(repository: repository)),
+    );
+    await pumpUntil(tester, find.textContaining('Temporary asset failure'));
+
+    await tester.tap(find.text('Try again'));
+    await pumpUntil(tester, find.text('Loaded categories'));
+
+    expect(repository.attempts, 2);
+    expect(find.text('Loaded categories'), findsOneWidget);
   });
 
   testWidgets('shows an error for an unknown category', (tester) async {

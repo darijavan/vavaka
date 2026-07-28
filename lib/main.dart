@@ -73,7 +73,11 @@ class CategoryListScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final future = useMemoized(repository.loadCategories, [repository]);
+    final retryAttempt = useState(0);
+    final future = useMemoized(repository.loadCategories, [
+      repository,
+      retryAttempt.value,
+    ]);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Vavaka')),
@@ -81,7 +85,10 @@ class CategoryListScreen extends HookWidget {
         future: future,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return _ErrorMessage(error: snapshot.error!);
+            return _ErrorMessage(
+              error: snapshot.error!,
+              onRetry: () => retryAttempt.value++,
+            );
           }
           if (!snapshot.hasData) {
             return const Center(child: Text('Loading…'));
@@ -228,16 +235,26 @@ class PrayerDetailScreen extends HookWidget {
 }
 
 class _ErrorMessage extends HookWidget {
-  const _ErrorMessage({required this.error});
+  const _ErrorMessage({required this.error, this.onRetry});
 
   final Object error;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Text('Could not load prayers: $error'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Could not load prayers: $error'),
+            if (onRetry != null) ...[
+              const SizedBox(height: 16),
+              FilledButton(onPressed: onRetry, child: const Text('Try again')),
+            ],
+          ],
+        ),
       ),
     );
   }

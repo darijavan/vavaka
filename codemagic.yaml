@@ -22,8 +22,8 @@ workflows:
     instance_type: mac_mini_m1          # macOS runner; free tier ~500 min/month
     max_build_duration: 60
     environment:
-      # Match this to your local Flutter (pubspec requires SDK ^3.12.1, so any 3.x works)
-      flutter: "3.24.5"
+      # Keep CI on the project's pinned SDK; go_router requires Flutter >=3.38.0.
+      flutter: "3.44.1"
       xcode: "16.2"
       groups:
         - appstore_credentials          # pulls the App Store Connect API + cert keys
