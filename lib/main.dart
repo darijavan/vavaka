@@ -10,78 +10,75 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends HookWidget {
   const MyApp({super.key, this.repository, this.initialLocation = '/'});
 
   final PrayerRepository? repository;
   final String initialLocation;
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  late final PrayerRepository _repository =
-      widget.repository ?? PrayerRepository();
-  late final GoRouter _router = GoRouter(
-    initialLocation: widget.initialLocation,
-    overridePlatformDefaultLocation: true,
-    routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) =>
-            CategoryListScreen(repository: _repository),
+  Widget build(BuildContext context) {
+    final resolvedRepository = useMemoized(
+      () => repository ?? PrayerRepository(),
+      [repository],
+    );
+    final router = useMemoized(
+      () => GoRouter(
+        initialLocation: initialLocation,
+        overridePlatformDefaultLocation: true,
         routes: [
           GoRoute(
-            path: 'categories/:slug',
-            builder: (context, state) => CategoryDetailScreen(
-              repository: _repository,
-              slug: state.pathParameters['slug']!,
-            ),
+            path: '/',
+            builder: (context, state) =>
+                CategoryListScreen(repository: resolvedRepository),
             routes: [
               GoRoute(
-                path: 'prayers/:id',
-                builder: (context, state) => PrayerDetailScreen(
-                  repository: _repository,
-                  prayerId: state.pathParameters['id']!,
+                path: 'categories/:slug',
+                builder: (context, state) => CategoryDetailScreen(
+                  repository: resolvedRepository,
+                  slug: state.pathParameters['slug']!,
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'prayers/:id',
+                    builder: (context, state) => PrayerDetailScreen(
+                      repository: resolvedRepository,
+                      prayerId: state.pathParameters['id']!,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ],
       ),
-    ],
-  );
+      [resolvedRepository, initialLocation],
+    );
+    useEffect(() => router.dispose, [router]);
 
-  @override
-  void dispose() {
-    _router.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Vavaka',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      routerConfig: _router,
+      routerConfig: router,
     );
   }
 }
 
-class CategoryListScreen extends StatelessWidget {
+class CategoryListScreen extends HookWidget {
   const CategoryListScreen({super.key, required this.repository});
 
   final PrayerRepository repository;
 
   @override
   Widget build(BuildContext context) {
+    final future = useMemoized(repository.loadCategories, [repository]);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Vavaka')),
       body: FutureBuilder<List<PrayerCategory>>(
-        future: repository.loadCategories(),
+        future: future,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return _ErrorMessage(error: snapshot.error!);
@@ -230,7 +227,7 @@ class PrayerDetailScreen extends HookWidget {
   }
 }
 
-class _ErrorMessage extends StatelessWidget {
+class _ErrorMessage extends HookWidget {
   const _ErrorMessage({required this.error});
 
   final Object error;
