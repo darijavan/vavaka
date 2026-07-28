@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vavaka/data/models/prayer.dart';
 import 'package:vavaka/data/models/prayer_category.dart';
 import 'package:vavaka/data/prayer_repository.dart';
 import 'package:vavaka/main.dart';
@@ -9,6 +10,37 @@ class _MissingCategoryRepository extends PrayerRepository {
   Future<PrayerCategory> findCategoryBySlug(String slug) {
     return Future.error(FormatException('Unknown prayer category: $slug'));
   }
+}
+
+class _SearchRepository extends PrayerRepository {
+  final prayer = Prayer(
+    id: 'ankizy-01',
+    title: 'Ry Andriamanitro! Tariho aho',
+    category: 'ankizy',
+    author: "'Abdu'l-Bahá",
+    content: PrayerContent(
+      schema: 'dast',
+      paragraphs: ['Ataovy ho toy ny fanaovanjiro hanazava aho.'],
+    ),
+  );
+
+  late final category = PrayerCategory(
+    slug: 'ankizy',
+    name: 'Ankizy',
+    prayers: [prayer],
+  );
+
+  @override
+  Future<List<PrayerCategory>> loadCategories() async => [category];
+
+  @override
+  Future<List<Prayer>> loadAllPrayers() async => [prayer];
+
+  @override
+  Future<PrayerCategory> findCategoryBySlug(String slug) async => category;
+
+  @override
+  Future<Prayer?> findPrayerById(String id) async => prayer;
 }
 
 Future<void> pumpUntil(WidgetTester tester, Finder finder) async {
@@ -78,4 +110,30 @@ void main() {
     );
   });
 
+  testWidgets('searches prayer text and opens the matching reader', (
+    tester,
+  ) async {
+    await tester.pumpWidget(MyApp(repository: _SearchRepository()));
+    await pumpUntil(tester, find.byTooltip('Search prayers'));
+    await tester.tap(find.byTooltip('Search prayers'));
+    await pumpUntil(
+      tester,
+      find.text('Enter a word or phrase to search prayers.'),
+    );
+
+    await tester.enterText(find.byType(TextField), 'FANAOVANJIRO HANAZAVA');
+    await tester.pump();
+    expect(
+      find.text('Enter a word or phrase to search prayers.'),
+      findsNothing,
+    );
+    final result = find.textContaining('Ry Andriamanitro! Tariho aho');
+    await pumpUntil(tester, result);
+    expect(result, findsOneWidget);
+    await tester.tap(result);
+    await pumpUntil(tester, find.textContaining('fanaovanjiro hanazava'));
+
+    expect(find.textContaining('fanaovanjiro hanazava'), findsOneWidget);
+    expect(find.byTooltip('Increase text size'), findsOneWidget);
+  });
 }

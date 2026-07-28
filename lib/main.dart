@@ -33,6 +33,10 @@ class _MyAppState extends State<MyApp> {
             CategoryListScreen(repository: _repository),
         routes: [
           GoRoute(
+            path: 'search',
+            builder: (context, state) => SearchScreen(repository: _repository),
+          ),
+          GoRoute(
             path: 'categories/:slug',
             builder: (context, state) => CategoryDetailScreen(
               repository: _repository,
@@ -79,7 +83,16 @@ class CategoryListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Vavaka')),
+      appBar: AppBar(
+        title: const Text('Vavaka'),
+        actions: [
+          IconButton(
+            tooltip: 'Search prayers',
+            onPressed: () => context.go('/search'),
+            icon: const Icon(Icons.search),
+          ),
+        ],
+      ),
       body: FutureBuilder<List<PrayerCategory>>(
         future: repository.loadCategories(),
         builder: (context, snapshot) {
@@ -108,6 +121,93 @@ class CategoryListScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class SearchScreen extends HookWidget {
+  const SearchScreen({super.key, required this.repository});
+
+  final PrayerRepository repository;
+
+  @override
+  Widget build(BuildContext context) {
+    final query = useState('');
+    final future = useMemoized(repository.loadAllPrayers, [repository]);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Search')),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              autofocus: true,
+              decoration: const InputDecoration(
+                hintText: 'Search prayers',
+                prefixIcon: Icon(Icons.search),
+              ),
+              onChanged: (value) => query.value = value,
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder<List<Prayer>>(
+              future: future,
+              builder: (context, snapshot) {
+                if (query.value.trim().isEmpty) {
+                  return const Center(
+                    child: Text('Enter a word or phrase to search prayers.'),
+                  );
+                }
+                return _SearchResults(snapshot: snapshot, query: query.value);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SearchResults extends StatelessWidget {
+  const _SearchResults({required this.snapshot, required this.query});
+
+  final AsyncSnapshot<List<Prayer>> snapshot;
+  final String query;
+
+  @override
+  Widget build(BuildContext context) {
+    if (snapshot.hasError) {
+      return _ErrorMessage(error: snapshot.error!);
+    }
+    if (!snapshot.hasData) {
+      return const Center(child: Text('Loading…'));
+    }
+
+    final normalizedQuery = query.trim().toLowerCase();
+    final results = snapshot.data!.where((prayer) {
+      return prayer.title.toLowerCase().contains(normalizedQuery) ||
+          prayer.author.toLowerCase().contains(normalizedQuery) ||
+          prayer.plainText.toLowerCase().contains(normalizedQuery);
+    }).toList();
+
+    if (results.isEmpty) {
+      return const Center(child: Text('No prayers found.'));
+    }
+
+    return ListView.separated(
+      itemCount: results.length,
+      separatorBuilder: (context, index) => const Divider(height: 1),
+      itemBuilder: (context, index) {
+        final prayer = results[index];
+        return ListTile(
+          title: Text(prayer.title),
+          subtitle: Text(prayer.author),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () =>
+              context.go('/categories/${prayer.category}/prayers/${prayer.id}'),
+        );
+      },
     );
   }
 }
