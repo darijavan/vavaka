@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
+import 'data/bookmark_store.dart';
 import 'data/models/prayer.dart';
 import 'data/models/prayer_category.dart';
 import 'data/prayer_repository.dart';
@@ -11,9 +12,15 @@ void main() {
 }
 
 class MyApp extends HookWidget {
-  const MyApp({super.key, this.repository, this.initialLocation = '/'});
+  const MyApp({
+    super.key,
+    this.repository,
+    this.bookmarkStore,
+    this.initialLocation = '/',
+  });
 
   final PrayerRepository? repository;
+  final BookmarkStore? bookmarkStore;
   final String initialLocation;
 
   @override
@@ -21,6 +28,10 @@ class MyApp extends HookWidget {
     final resolvedRepository = useMemoized(
       () => repository ?? PrayerRepository(),
       [repository],
+    );
+    final resolvedBookmarkStore = useMemoized(
+      () => bookmarkStore ?? SharedPreferencesBookmarkStore(),
+      [bookmarkStore],
     );
     final router = useMemoized(
       () => GoRouter(
@@ -43,6 +54,7 @@ class MyApp extends HookWidget {
                     path: 'prayers/:id',
                     builder: (context, state) => PrayerDetailScreen(
                       repository: resolvedRepository,
+                      bookmarkStore: resolvedBookmarkStore,
                       prayerId: state.pathParameters['id']!,
                     ),
                   ),
@@ -52,7 +64,7 @@ class MyApp extends HookWidget {
           ),
         ],
       ),
-      [resolvedRepository, initialLocation],
+      [resolvedRepository, resolvedBookmarkStore, initialLocation],
     );
     useEffect(() => router.dispose, [router]);
 
@@ -178,10 +190,12 @@ class PrayerDetailScreen extends HookWidget {
   const PrayerDetailScreen({
     super.key,
     required this.repository,
+    required this.bookmarkStore,
     required this.prayerId,
   });
 
   final PrayerRepository repository;
+  final BookmarkStore bookmarkStore;
   final String prayerId;
 
   static const _minimumFontSize = 14.0;
@@ -191,16 +205,59 @@ class PrayerDetailScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final fontSize = useState(18.0);
+    final isBookmarked = useState<bool?>(null);
+    final isSavingBookmark = useState(false);
     final future = useMemoized(() => repository.findPrayerById(prayerId), [
       repository,
       prayerId,
     ]);
+    useEffect(() {
+      var active = true;
+      bookmarkStore.isBookmarked(prayerId).then((value) {
+        if (active) {
+          isBookmarked.value = value;
+        }
+      });
+      return () => active = false;
+    }, [bookmarkStore, prayerId]);
+
     return FutureBuilder<Prayer?>(
       future: future,
       builder: (context, snapshot) {
         final prayer = snapshot.data;
         return Scaffold(
-          appBar: AppBar(title: Text(prayer?.title ?? 'Vavaka')),
+          appBar: AppBar(
+            title: Text(prayer?.title ?? 'Vavaka'),
+            actions: [
+              IconButton(
+                tooltip: isBookmarked.value == true
+                    ? 'Remove bookmark'
+                    : 'Bookmark prayer',
+                onPressed:
+                    prayer == null ||
+                        isBookmarked.value == null ||
+                        isSavingBookmark.value
+                    ? null
+                    : () async {
+                        final nextValue = !isBookmarked.value!;
+                        isSavingBookmark.value = true;
+                        await bookmarkStore.setBookmarked(
+                          prayerId,
+                          bookmarked: nextValue,
+                        );
+                        if (context.mounted) {
+                          isBookmarked.value = nextValue;
+                          isSavingBookmark.value = false;
+                        }
+                      },
+                icon: Icon(
+                  isBookmarked.value == true
+                      ? Icons.bookmark
+                      : Icons.bookmark_border,
+                ),
+              ),
+            ],
+          ),
           body: _buildBody(snapshot, fontSize: fontSize.value),
           bottomNavigationBar: SafeArea(
             child: Row(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vavaka/data/models/prayer_category.dart';
 import 'package:vavaka/data/prayer_repository.dart';
 import 'package:vavaka/main.dart';
@@ -39,6 +40,7 @@ Future<void> pumpUntil(WidgetTester tester, Finder finder) async {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() => SharedPreferences.setMockInitialValues({}));
 
   testWidgets('navigates from category list to prayer detail', (tester) async {
     await tester.pumpWidget(const MyApp());
