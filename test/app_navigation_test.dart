@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vavaka/data/models/prayer.dart';
 import 'package:vavaka/data/models/prayer_category.dart';
 import 'package:vavaka/data/prayer_repository.dart';
 import 'package:vavaka/main.dart';
@@ -26,6 +27,24 @@ class _RetryingCategoryRepository extends PrayerRepository {
       PrayerCategory(slug: 'retry', name: 'Loaded categories', prayers: []),
     ]);
   }
+}
+
+class _SearchRepository extends PrayerRepository {
+  final prayers = [
+    Prayer(
+      id: 'search-result',
+      title: 'Vavaka maraina',
+      category: 'isanandro',
+      author: "'Abdu'l-Bahá",
+      content: PrayerContent(
+        schema: 'dast',
+        paragraphs: ['Hazavao ny foko amin’ny fahazavanao.'],
+      ),
+    ),
+  ];
+
+  @override
+  Future<List<Prayer>> loadAllPrayers() => Future.value(prayers);
 }
 
 Future<void> pumpUntil(WidgetTester tester, Finder finder) async {
@@ -74,6 +93,24 @@ void main() {
     await tester.tap(increaseButton);
     await tester.pump();
     expect(paragraphText().style?.fontSize, 20);
+  });
+
+  testWidgets('searches prayer text and opens the reader', (tester) async {
+    await tester.pumpWidget(MyApp(repository: _SearchRepository()));
+    await tester.tap(find.byTooltip('Search prayers'));
+    await pumpUntil(
+      tester,
+      find.text('Enter a word or phrase to search prayers.'),
+    );
+
+    await tester.enterText(find.byType(TextField), 'FAHAZAVANAO');
+    await tester.pump();
+    expect(find.text('Vavaka maraina'), findsOneWidget);
+
+    await tester.tap(find.text('Vavaka maraina'));
+    await pumpUntil(tester, find.textContaining('Hazavao ny foko'));
+
+    expect(find.textContaining('Hazavao ny foko'), findsOneWidget);
   });
 
   testWidgets('retries category loading after an error', (tester) async {
