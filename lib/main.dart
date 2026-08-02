@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
 import 'data/bookmark_store.dart';
+import 'data/font_size_store.dart';
 import 'data/models/prayer.dart';
 import 'data/models/prayer_category.dart';
 import 'data/prayer_repository.dart';
@@ -16,11 +17,13 @@ class MyApp extends HookWidget {
     super.key,
     this.repository,
     this.bookmarkStore,
+    this.fontSizeStore,
     this.initialLocation = '/',
   });
 
   final PrayerRepository? repository;
   final BookmarkStore? bookmarkStore;
+  final FontSizeStore? fontSizeStore;
   final String initialLocation;
 
   @override
@@ -32,6 +35,10 @@ class MyApp extends HookWidget {
     final resolvedBookmarkStore = useMemoized(
       () => bookmarkStore ?? SharedPreferencesBookmarkStore(),
       [bookmarkStore],
+    );
+    final resolvedFontSizeStore = useMemoized(
+      () => fontSizeStore ?? SharedPreferencesFontSizeStore(),
+      [fontSizeStore],
     );
     final router = useMemoized(
       () => GoRouter(
@@ -55,6 +62,7 @@ class MyApp extends HookWidget {
                     builder: (context, state) => PrayerDetailScreen(
                       repository: resolvedRepository,
                       bookmarkStore: resolvedBookmarkStore,
+                      fontSizeStore: resolvedFontSizeStore,
                       prayerId: state.pathParameters['id']!,
                     ),
                   ),
@@ -69,7 +77,12 @@ class MyApp extends HookWidget {
           ),
         ],
       ),
-      [resolvedRepository, resolvedBookmarkStore, initialLocation],
+      [
+        resolvedRepository,
+        resolvedBookmarkStore,
+        resolvedFontSizeStore,
+        initialLocation,
+      ],
     );
     useEffect(() => router.dispose, [router]);
 
@@ -284,20 +297,20 @@ class PrayerDetailScreen extends HookWidget {
     super.key,
     required this.repository,
     required this.bookmarkStore,
+    required this.fontSizeStore,
     required this.prayerId,
   });
 
   final PrayerRepository repository;
   final BookmarkStore bookmarkStore;
+  final FontSizeStore fontSizeStore;
   final String prayerId;
 
-  static const _minimumFontSize = 14.0;
-  static const _maximumFontSize = 32.0;
   static const _fontSizeStep = 2.0;
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = useState(18.0);
+    final fontSize = useState<double?>(null);
     final isBookmarked = useState<bool?>(null);
     final isSavingBookmark = useState(false);
     final future = useMemoized(() => repository.findPrayerById(prayerId), [
@@ -313,6 +326,15 @@ class PrayerDetailScreen extends HookWidget {
       });
       return () => active = false;
     }, [bookmarkStore, prayerId]);
+    useEffect(() {
+      var active = true;
+      fontSizeStore.loadFontSize().then((value) {
+        if (active) {
+          fontSize.value = value;
+        }
+      });
+      return () => active = false;
+    }, [fontSizeStore]);
 
     return FutureBuilder<Prayer?>(
       future: future,
@@ -358,15 +380,29 @@ class PrayerDetailScreen extends HookWidget {
               children: [
                 IconButton(
                   tooltip: 'Decrease text size',
-                  onPressed: prayer != null && fontSize.value > _minimumFontSize
-                      ? () => fontSize.value -= _fontSizeStep
+                  onPressed:
+                      prayer != null &&
+                          fontSize.value != null &&
+                          fontSize.value! > FontSizeStore.minimumFontSize
+                      ? () {
+                          final nextValue = fontSize.value! - _fontSizeStep;
+                          fontSize.value = nextValue;
+                          fontSizeStore.saveFontSize(nextValue);
+                        }
                       : null,
                   icon: const Icon(Icons.text_decrease),
                 ),
                 IconButton(
                   tooltip: 'Increase text size',
-                  onPressed: prayer != null && fontSize.value < _maximumFontSize
-                      ? () => fontSize.value += _fontSizeStep
+                  onPressed:
+                      prayer != null &&
+                          fontSize.value != null &&
+                          fontSize.value! < FontSizeStore.maximumFontSize
+                      ? () {
+                          final nextValue = fontSize.value! + _fontSizeStep;
+                          fontSize.value = nextValue;
+                          fontSizeStore.saveFontSize(nextValue);
+                        }
                       : null,
                   icon: const Icon(Icons.text_increase),
                 ),
@@ -380,12 +416,12 @@ class PrayerDetailScreen extends HookWidget {
 
   Widget _buildBody(
     AsyncSnapshot<Prayer?> snapshot, {
-    required double fontSize,
+    required double? fontSize,
   }) {
     if (snapshot.hasError) {
       return _ErrorMessage(error: snapshot.error!);
     }
-    if (!snapshot.hasData) {
+    if (!snapshot.hasData || fontSize == null) {
       return const Center(child: Text('Loading…'));
     }
 

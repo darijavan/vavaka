@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vavaka/data/bookmark_store.dart';
+import 'package:vavaka/data/font_size_store.dart';
 import 'package:vavaka/data/prayer_repository.dart';
 import 'package:vavaka/main.dart';
 
@@ -11,6 +12,7 @@ Future<void> _pumpReader(WidgetTester tester) async {
       home: PrayerDetailScreen(
         repository: PrayerRepository(),
         bookmarkStore: SharedPreferencesBookmarkStore(),
+        fontSizeStore: SharedPreferencesFontSizeStore(),
         prayerId: 'ankizy-01',
       ),
     ),
