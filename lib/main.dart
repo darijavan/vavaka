@@ -47,8 +47,10 @@ class MyApp extends HookWidget {
         routes: [
           GoRoute(
             path: '/',
-            builder: (context, state) =>
-                CategoryListScreen(repository: resolvedRepository),
+            builder: (context, state) => CategoryListScreen(
+              repository: resolvedRepository,
+              fontSizeStore: resolvedFontSizeStore,
+            ),
             routes: [
               GoRoute(
                 path: 'categories/:slug',
@@ -75,6 +77,11 @@ class MyApp extends HookWidget {
             builder: (context, state) =>
                 SearchScreen(repository: resolvedRepository),
           ),
+          GoRoute(
+            path: '/settings',
+            builder: (context, state) =>
+                SettingsScreen(fontSizeStore: resolvedFontSizeStore),
+          ),
         ],
       ),
       [
@@ -97,9 +104,14 @@ class MyApp extends HookWidget {
 }
 
 class CategoryListScreen extends HookWidget {
-  const CategoryListScreen({super.key, required this.repository});
+  const CategoryListScreen({
+    super.key,
+    required this.repository,
+    this.fontSizeStore,
+  });
 
   final PrayerRepository repository;
+  final FontSizeStore? fontSizeStore;
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +130,12 @@ class CategoryListScreen extends HookWidget {
             onPressed: () => context.go('/search'),
             icon: const Icon(Icons.search),
           ),
+          if (fontSizeStore != null)
+            IconButton(
+              tooltip: 'Settings',
+              onPressed: () => context.go('/settings'),
+              icon: const Icon(Icons.settings),
+            ),
         ],
       ),
       body: FutureBuilder<List<PrayerCategory>>(
@@ -151,6 +169,56 @@ class CategoryListScreen extends HookWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class SettingsScreen extends HookWidget {
+  const SettingsScreen({super.key, required this.fontSizeStore});
+
+  final FontSizeStore fontSizeStore;
+
+  @override
+  Widget build(BuildContext context) {
+    final fontSize = useState<double?>(null);
+    useEffect(() {
+      var active = true;
+      fontSizeStore.loadFontSize().then((value) {
+        if (active) {
+          fontSize.value = value;
+        }
+      });
+      return () => active = false;
+    }, [fontSizeStore]);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings')),
+      body: fontSize.value == null
+          ? const Center(child: Text('Loading…'))
+          : ListView(
+              padding: const EdgeInsets.all(24),
+              children: [
+                const Text('Reader font size'),
+                Text(fontSize.value!.round().toString()),
+                Slider(
+                  value: fontSize.value!,
+                  min: FontSizeStore.minimumFontSize,
+                  max: FontSizeStore.maximumFontSize,
+                  divisions:
+                      (FontSizeStore.maximumFontSize -
+                              FontSizeStore.minimumFontSize)
+                          .round(),
+                  label: fontSize.value!.round().toString(),
+                  onChanged: (value) {
+                    if (value == fontSize.value) {
+                      return;
+                    }
+                    fontSize.value = value;
+                    fontSizeStore.saveFontSize(value);
+                  },
+                ),
+              ],
+            ),
     );
   }
 }
