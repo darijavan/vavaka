@@ -7,6 +7,7 @@ import 'data/font_size_store.dart';
 import 'data/models/prayer.dart';
 import 'data/models/prayer_category.dart';
 import 'data/prayer_repository.dart';
+import 'data/prayer_sharer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,12 +19,14 @@ class MyApp extends HookWidget {
     this.repository,
     this.bookmarkStore,
     this.fontSizeStore,
+    this.prayerSharer,
     this.initialLocation = '/',
   });
 
   final PrayerRepository? repository;
   final BookmarkStore? bookmarkStore;
   final FontSizeStore? fontSizeStore;
+  final PrayerSharer? prayerSharer;
   final String initialLocation;
 
   @override
@@ -39,6 +42,10 @@ class MyApp extends HookWidget {
     final resolvedFontSizeStore = useMemoized(
       () => fontSizeStore ?? SharedPreferencesFontSizeStore(),
       [fontSizeStore],
+    );
+    final resolvedPrayerSharer = useMemoized(
+      () => prayerSharer ?? PlatformPrayerSharer(),
+      [prayerSharer],
     );
     final router = useMemoized(
       () => GoRouter(
@@ -65,6 +72,7 @@ class MyApp extends HookWidget {
                       repository: resolvedRepository,
                       bookmarkStore: resolvedBookmarkStore,
                       fontSizeStore: resolvedFontSizeStore,
+                      prayerSharer: resolvedPrayerSharer,
                       prayerId: state.pathParameters['id']!,
                     ),
                   ),
@@ -88,6 +96,7 @@ class MyApp extends HookWidget {
         resolvedRepository,
         resolvedBookmarkStore,
         resolvedFontSizeStore,
+        resolvedPrayerSharer,
         initialLocation,
       ],
     );
@@ -366,12 +375,14 @@ class PrayerDetailScreen extends HookWidget {
     required this.repository,
     required this.bookmarkStore,
     required this.fontSizeStore,
+    this.prayerSharer = const PlatformPrayerSharer(),
     required this.prayerId,
   });
 
   final PrayerRepository repository;
   final BookmarkStore bookmarkStore;
   final FontSizeStore fontSizeStore;
+  final PrayerSharer prayerSharer;
   final String prayerId;
 
   static const _fontSizeStep = 2.0;
@@ -412,6 +423,19 @@ class PrayerDetailScreen extends HookWidget {
           appBar: AppBar(
             title: Text(prayer?.title ?? 'Vavaka'),
             actions: [
+              IconButton(
+                tooltip: 'Share prayer',
+                onPressed: prayer == null
+                    ? null
+                    : () => prayerSharer.share(
+                        [
+                          prayer.title,
+                          prayer.author,
+                          ...prayer.paragraphs,
+                        ].join('\n\n'),
+                      ),
+                icon: const Icon(Icons.share),
+              ),
               IconButton(
                 tooltip: isBookmarked.value == true
                     ? 'Remove bookmark'
