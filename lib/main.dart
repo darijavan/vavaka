@@ -8,6 +8,7 @@ import 'data/models/prayer.dart';
 import 'data/models/prayer_category.dart';
 import 'data/prayer_repository.dart';
 import 'data/prayer_sharer.dart';
+import 'data/theme_mode_store.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,6 +20,7 @@ class MyApp extends HookWidget {
     this.repository,
     this.bookmarkStore,
     this.fontSizeStore,
+    this.themeModeStore,
     this.prayerSharer,
     this.initialLocation = '/',
   });
@@ -26,6 +28,7 @@ class MyApp extends HookWidget {
   final PrayerRepository? repository;
   final BookmarkStore? bookmarkStore;
   final FontSizeStore? fontSizeStore;
+  final ThemeModeStore? themeModeStore;
   final PrayerSharer? prayerSharer;
   final String initialLocation;
 
@@ -43,6 +46,20 @@ class MyApp extends HookWidget {
       () => fontSizeStore ?? SharedPreferencesFontSizeStore(),
       [fontSizeStore],
     );
+    final resolvedThemeModeStore = useMemoized(
+      () => themeModeStore ?? SharedPreferencesThemeModeStore(),
+      [themeModeStore],
+    );
+    final themeMode = useState(ThemeMode.light);
+    useEffect(() {
+      var active = true;
+      resolvedThemeModeStore.loadThemeMode().then((value) {
+        if (active) {
+          themeMode.value = value;
+        }
+      });
+      return () => active = false;
+    }, [resolvedThemeModeStore]);
     final resolvedPrayerSharer = useMemoized(
       () => prayerSharer ?? PlatformPrayerSharer(),
       [prayerSharer],
@@ -87,8 +104,14 @@ class MyApp extends HookWidget {
           ),
           GoRoute(
             path: '/settings',
-            builder: (context, state) =>
-                SettingsScreen(fontSizeStore: resolvedFontSizeStore),
+            builder: (context, state) => SettingsScreen(
+              fontSizeStore: resolvedFontSizeStore,
+              themeMode: themeMode.value,
+              onThemeModeChanged: (value) {
+                themeMode.value = value;
+                resolvedThemeModeStore.saveThemeMode(value);
+              },
+            ),
           ),
         ],
       ),
@@ -96,6 +119,7 @@ class MyApp extends HookWidget {
         resolvedRepository,
         resolvedBookmarkStore,
         resolvedFontSizeStore,
+        resolvedThemeModeStore,
         resolvedPrayerSharer,
         initialLocation,
       ],
@@ -104,8 +128,20 @@ class MyApp extends HookWidget {
 
     return MaterialApp.router(
       title: 'Vavaka',
+      themeMode: themeMode.value,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.light,
+        ),
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
       ),
       routerConfig: router,
     );
@@ -183,13 +219,21 @@ class CategoryListScreen extends HookWidget {
 }
 
 class SettingsScreen extends HookWidget {
-  const SettingsScreen({super.key, required this.fontSizeStore});
+  const SettingsScreen({
+    super.key,
+    required this.fontSizeStore,
+    required this.themeMode,
+    required this.onThemeModeChanged,
+  });
 
   final FontSizeStore fontSizeStore;
+  final ThemeMode themeMode;
+  final ValueChanged<ThemeMode> onThemeModeChanged;
 
   @override
   Widget build(BuildContext context) {
     final fontSize = useState<double?>(null);
+    final selectedThemeMode = useState(themeMode);
     useEffect(() {
       var active = true;
       fontSizeStore.loadFontSize().then((value) {
@@ -199,6 +243,10 @@ class SettingsScreen extends HookWidget {
       });
       return () => active = false;
     }, [fontSizeStore]);
+    useEffect(() {
+      selectedThemeMode.value = themeMode;
+      return null;
+    }, [themeMode]);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
@@ -207,6 +255,18 @@ class SettingsScreen extends HookWidget {
           : ListView(
               padding: const EdgeInsets.all(24),
               children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Dark theme'),
+                  value: selectedThemeMode.value == ThemeMode.dark,
+                  onChanged: (value) {
+                    final newThemeMode = value
+                        ? ThemeMode.dark
+                        : ThemeMode.light;
+                    selectedThemeMode.value = newThemeMode;
+                    onThemeModeChanged(newThemeMode);
+                  },
+                ),
                 const Text('Reader font size'),
                 Text(fontSize.value!.round().toString()),
                 Slider(
