@@ -1,121 +1,567 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
+
+import 'data/bookmark_store.dart';
+import 'data/font_size_store.dart';
+import 'data/models/prayer.dart';
+import 'data/models/prayer_category.dart';
+import 'data/prayer_repository.dart';
+import 'data/prayer_sharer.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends HookWidget {
+  const MyApp({
+    super.key,
+    this.repository,
+    this.bookmarkStore,
+    this.fontSizeStore,
+    this.prayerSharer,
+    this.initialLocation = '/',
+  });
 
-  // This widget is the root of your application.
+  final PrayerRepository? repository;
+  final BookmarkStore? bookmarkStore;
+  final FontSizeStore? fontSizeStore;
+  final PrayerSharer? prayerSharer;
+  final String initialLocation;
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+    final resolvedRepository = useMemoized(
+      () => repository ?? PrayerRepository(),
+      [repository],
+    );
+    final resolvedBookmarkStore = useMemoized(
+      () => bookmarkStore ?? SharedPreferencesBookmarkStore(),
+      [bookmarkStore],
+    );
+    final resolvedFontSizeStore = useMemoized(
+      () => fontSizeStore ?? SharedPreferencesFontSizeStore(),
+      [fontSizeStore],
+    );
+    final resolvedPrayerSharer = useMemoized(
+      () => prayerSharer ?? PlatformPrayerSharer(),
+      [prayerSharer],
+    );
+    final router = useMemoized(
+      () => GoRouter(
+        initialLocation: initialLocation,
+        overridePlatformDefaultLocation: true,
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (context, state) => CategoryListScreen(
+              repository: resolvedRepository,
+              fontSizeStore: resolvedFontSizeStore,
+            ),
+            routes: [
+              GoRoute(
+                path: 'categories/:slug',
+                builder: (context, state) => CategoryDetailScreen(
+                  repository: resolvedRepository,
+                  slug: state.pathParameters['slug']!,
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'prayers/:id',
+                    builder: (context, state) => PrayerDetailScreen(
+                      repository: resolvedRepository,
+                      bookmarkStore: resolvedBookmarkStore,
+                      fontSizeStore: resolvedFontSizeStore,
+                      prayerSharer: resolvedPrayerSharer,
+                      prayerId: state.pathParameters['id']!,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/search',
+            builder: (context, state) =>
+                SearchScreen(repository: resolvedRepository),
+          ),
+          GoRoute(
+            path: '/settings',
+            builder: (context, state) =>
+                SettingsScreen(fontSizeStore: resolvedFontSizeStore),
+          ),
+        ],
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      [
+        resolvedRepository,
+        resolvedBookmarkStore,
+        resolvedFontSizeStore,
+        resolvedPrayerSharer,
+        initialLocation,
+      ],
+    );
+    useEffect(() => router.dispose, [router]);
+
+    return MaterialApp.router(
+      title: 'Vavaka',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      ),
+      routerConfig: router,
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class CategoryListScreen extends HookWidget {
+  const CategoryListScreen({
+    super.key,
+    required this.repository,
+    this.fontSizeStore,
+  });
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  final PrayerRepository repository;
+  final FontSizeStore? fontSizeStore;
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    final retryAttempt = useState(0);
+    final future = useMemoized(repository.loadCategories, [
+      repository,
+      retryAttempt.value,
+    ]);
+
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+        title: const Text('Vavaka'),
+        actions: [
+          IconButton(
+            tooltip: 'Search prayers',
+            onPressed: () => context.go('/search'),
+            icon: const Icon(Icons.search),
+          ),
+          if (fontSizeStore != null)
+            IconButton(
+              tooltip: 'Settings',
+              onPressed: () => context.go('/settings'),
+              icon: const Icon(Icons.settings),
             ),
+        ],
+      ),
+      body: FutureBuilder<List<PrayerCategory>>(
+        future: future,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return _ErrorMessage(
+              error: snapshot.error!,
+              onRetry: () => retryAttempt.value++,
+            );
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: Text('Loading…'));
+          }
+
+          final categories = snapshot.data!;
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                for (final category in categories) ...[
+                  ListTile(
+                    title: Text(category.name),
+                    subtitle: Text('${category.prayerCount} vavaka'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.go('/categories/${category.slug}'),
+                  ),
+                  const Divider(height: 1),
+                ],
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class SettingsScreen extends HookWidget {
+  const SettingsScreen({super.key, required this.fontSizeStore});
+
+  final FontSizeStore fontSizeStore;
+
+  @override
+  Widget build(BuildContext context) {
+    final fontSize = useState<double?>(null);
+    useEffect(() {
+      var active = true;
+      fontSizeStore.loadFontSize().then((value) {
+        if (active) {
+          fontSize.value = value;
+        }
+      });
+      return () => active = false;
+    }, [fontSizeStore]);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings')),
+      body: fontSize.value == null
+          ? const Center(child: Text('Loading…'))
+          : ListView(
+              padding: const EdgeInsets.all(24),
+              children: [
+                const Text('Reader font size'),
+                Text(fontSize.value!.round().toString()),
+                Slider(
+                  value: fontSize.value!,
+                  min: FontSizeStore.minimumFontSize,
+                  max: FontSizeStore.maximumFontSize,
+                  divisions:
+                      (FontSizeStore.maximumFontSize -
+                              FontSizeStore.minimumFontSize)
+                          .round(),
+                  label: fontSize.value!.round().toString(),
+                  onChanged: (value) {
+                    if (value == fontSize.value) {
+                      return;
+                    }
+                    fontSize.value = value;
+                    fontSizeStore.saveFontSize(value);
+                  },
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+class SearchScreen extends HookWidget {
+  const SearchScreen({super.key, required this.repository});
+
+  final PrayerRepository repository;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = useTextEditingController();
+    final query = useState('');
+    final future = useMemoized(repository.loadAllPrayers, [repository]);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Search')),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              controller: controller,
+              autofocus: true,
+              decoration: const InputDecoration(
+                hintText: 'Search prayers',
+                prefixIcon: Icon(Icons.search),
+              ),
+              onChanged: (value) => query.value = value,
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder<List<Prayer>>(
+              future: future,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return _ErrorMessage(error: snapshot.error!);
+                }
+                if (!snapshot.hasData) {
+                  return const Center(child: Text('Loading…'));
+                }
+
+                final normalizedQuery = query.value.trim().toLowerCase();
+                if (normalizedQuery.isEmpty) {
+                  return const Center(
+                    child: Text('Enter a word or phrase to search prayers.'),
+                  );
+                }
+
+                final matches = snapshot.data!.where((prayer) {
+                  return prayer.title.toLowerCase().contains(normalizedQuery) ||
+                      prayer.author.toLowerCase().contains(normalizedQuery) ||
+                      prayer.plainText.toLowerCase().contains(normalizedQuery);
+                }).toList();
+                if (matches.isEmpty) {
+                  return const Center(child: Text('No prayers found.'));
+                }
+
+                return ListView.separated(
+                  itemCount: matches.length,
+                  separatorBuilder: (context, index) =>
+                      const Divider(height: 1),
+                  itemBuilder: (context, index) {
+                    final prayer = matches[index];
+                    return ListTile(
+                      title: Text(prayer.title),
+                      subtitle: Text(prayer.author),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => context.go(
+                        '/categories/${prayer.category}/prayers/${prayer.id}',
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CategoryDetailScreen extends HookWidget {
+  const CategoryDetailScreen({
+    super.key,
+    required this.repository,
+    required this.slug,
+  });
+
+  final PrayerRepository repository;
+  final String slug;
+
+  @override
+  Widget build(BuildContext context) {
+    final future = useMemoized(() => repository.findCategoryBySlug(slug), [
+      repository,
+      slug,
+    ]);
+    return FutureBuilder<PrayerCategory>(
+      future: future,
+      builder: (context, snapshot) {
+        final title = snapshot.data?.name ?? 'Vavaka';
+        return Scaffold(
+          appBar: AppBar(title: Text(title)),
+          body: _buildBody(context, snapshot),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    AsyncSnapshot<PrayerCategory> snapshot,
+  ) {
+    if (snapshot.hasError) {
+      return _ErrorMessage(error: snapshot.error!);
+    }
+    if (!snapshot.hasData) {
+      return const Center(child: Text('Loading…'));
+    }
+
+    final category = snapshot.data!;
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          for (final prayer in category.prayers) ...[
+            ListTile(
+              title: Text(prayer.title),
+              subtitle: Text(prayer.author),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go('/categories/$slug/prayers/${prayer.id}'),
+            ),
+            const Divider(height: 1),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class PrayerDetailScreen extends HookWidget {
+  const PrayerDetailScreen({
+    super.key,
+    required this.repository,
+    required this.bookmarkStore,
+    required this.fontSizeStore,
+    this.prayerSharer = const PlatformPrayerSharer(),
+    required this.prayerId,
+  });
+
+  final PrayerRepository repository;
+  final BookmarkStore bookmarkStore;
+  final FontSizeStore fontSizeStore;
+  final PrayerSharer prayerSharer;
+  final String prayerId;
+
+  static const _fontSizeStep = 2.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final fontSize = useState<double?>(null);
+    final isBookmarked = useState<bool?>(null);
+    final isSavingBookmark = useState(false);
+    final future = useMemoized(() => repository.findPrayerById(prayerId), [
+      repository,
+      prayerId,
+    ]);
+    useEffect(() {
+      var active = true;
+      bookmarkStore.isBookmarked(prayerId).then((value) {
+        if (active) {
+          isBookmarked.value = value;
+        }
+      });
+      return () => active = false;
+    }, [bookmarkStore, prayerId]);
+    useEffect(() {
+      var active = true;
+      fontSizeStore.loadFontSize().then((value) {
+        if (active) {
+          fontSize.value = value;
+        }
+      });
+      return () => active = false;
+    }, [fontSizeStore]);
+
+    return FutureBuilder<Prayer?>(
+      future: future,
+      builder: (context, snapshot) {
+        final prayer = snapshot.data;
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(prayer?.title ?? 'Vavaka'),
+            actions: [
+              IconButton(
+                tooltip: 'Share prayer',
+                onPressed: prayer == null
+                    ? null
+                    : () => prayerSharer.share(
+                        [
+                          prayer.title,
+                          prayer.author,
+                          ...prayer.paragraphs,
+                        ].join('\n\n'),
+                      ),
+                icon: const Icon(Icons.share),
+              ),
+              IconButton(
+                tooltip: isBookmarked.value == true
+                    ? 'Remove bookmark'
+                    : 'Bookmark prayer',
+                onPressed:
+                    prayer == null ||
+                        isBookmarked.value == null ||
+                        isSavingBookmark.value
+                    ? null
+                    : () async {
+                        final nextValue = !isBookmarked.value!;
+                        isSavingBookmark.value = true;
+                        await bookmarkStore.setBookmarked(
+                          prayerId,
+                          bookmarked: nextValue,
+                        );
+                        if (context.mounted) {
+                          isBookmarked.value = nextValue;
+                          isSavingBookmark.value = false;
+                        }
+                      },
+                icon: Icon(
+                  isBookmarked.value == true
+                      ? Icons.bookmark
+                      : Icons.bookmark_border,
+                ),
+              ),
+            ],
+          ),
+          body: _buildBody(snapshot, fontSize: fontSize.value),
+          bottomNavigationBar: SafeArea(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  tooltip: 'Decrease text size',
+                  onPressed:
+                      prayer != null &&
+                          fontSize.value != null &&
+                          fontSize.value! > FontSizeStore.minimumFontSize
+                      ? () {
+                          final nextValue = fontSize.value! - _fontSizeStep;
+                          fontSize.value = nextValue;
+                          fontSizeStore.saveFontSize(nextValue);
+                        }
+                      : null,
+                  icon: const Icon(Icons.text_decrease),
+                ),
+                IconButton(
+                  tooltip: 'Increase text size',
+                  onPressed:
+                      prayer != null &&
+                          fontSize.value != null &&
+                          fontSize.value! < FontSizeStore.maximumFontSize
+                      ? () {
+                          final nextValue = fontSize.value! + _fontSizeStep;
+                          fontSize.value = nextValue;
+                          fontSizeStore.saveFontSize(nextValue);
+                        }
+                      : null,
+                  icon: const Icon(Icons.text_increase),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(
+    AsyncSnapshot<Prayer?> snapshot, {
+    required double? fontSize,
+  }) {
+    if (snapshot.hasError) {
+      return _ErrorMessage(error: snapshot.error!);
+    }
+    if (!snapshot.hasData || fontSize == null) {
+      return const Center(child: Text('Loading…'));
+    }
+
+    final prayer = snapshot.data;
+    if (prayer == null) {
+      return const Center(child: Text('Prayer not found.'));
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(24),
+      children: [
+        Text(prayer.title, style: const TextStyle(fontSize: 24)),
+        const SizedBox(height: 8),
+        Text(
+          prayer.author,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 24),
+        for (final paragraph in prayer.paragraphs) ...[
+          Text(paragraph, style: TextStyle(fontSize: fontSize, height: 1.5)),
+          const SizedBox(height: 16),
+        ],
+      ],
+    );
+  }
+}
+
+class _ErrorMessage extends HookWidget {
+  const _ErrorMessage({required this.error, this.onRetry});
+
+  final Object error;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Could not load prayers: $error'),
+            if (onRetry != null) ...[
+              const SizedBox(height: 16),
+              FilledButton(onPressed: onRetry, child: const Text('Try again')),
+            ],
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }

@@ -1,0 +1,76 @@
+# Codemagic CI/CD for Vavaka (Bahá'í Prayer App — Malagasy)
+# Purpose: build the iOS IPA on Codemagic's macOS runner and publish it to
+#          TestFlight / the App Store — no Mac required on your side.
+# This is the main way to get value out of the paid Apple Developer Program
+# (membership started 9 Jun 2026, invoice #MC78266971, $99/yr, renews ~Jun 2027).
+#
+# ONE-TIME SETUP (do this in the Codemagic web UI, https://codemagic.io):
+#   1. Add the repo (GitHub: darijavan/vavaka).
+#   2. Create an Environment variable group named "appstore_credentials"
+#      and add these keys:
+#        APP_STORE_CONNECT_ISSUER_ID   - from App Store Connect > Users > Keys
+#        APP_STORE_CONNECT_KEY_IDENTIFIER - the Key ID (e.g. ABC1234567)
+#        APP_STORE_CONNECT_PRIVATE_KEY - the full .p8 file contents (API key)
+#        CERTIFICATE_PRIVATE_KEY       - your Distribution cert's private key (.p12 password not needed for API-key signing, but keep for safety)
+#      (Automatic signing uses the App Store Connect API key above to fetch the
+#       provisioning profile for com.ridjvan.vavaka — no manual profile upload.)
+#   3. Trigger a build on the main branch (or push a commit to run automatically).
+
+workflows:
+  ios-release-testflight:
+    name: iOS Release (TestFlight)
+    instance_type: mac_mini_m1          # macOS runner; free tier ~500 min/month
+    max_build_duration: 60
+    environment:
+      # Keep CI on the project's pinned SDK; go_router requires Flutter >=3.38.0.
+      flutter: "3.44.1"
+      xcode: "16.2"
+      groups:
+        - appstore_credentials          # pulls the App Store Connect API + cert keys
+      vars:
+        BUNDLE_ID: "com.ridjvan.vavaka"
+        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+        APP_STORE_CONNECT_PROFILE_NAME: "com.ridjvan.vavaka App Store"  # optional; Auto mgmt if blank
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.ridjvan.vavaka
+        automatic: true                 # uses the App Store Connect API key for signing
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+        - $CM_BUILD_DIR/ios/Pods
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Flutter analyze
+        script: flutter analyze
+      - name: Flutter test
+        script: flutter test
+      - name: Install CocoaPods
+        script: cd ios && pod install
+      - name: Build & sign iOS IPA
+        script: |
+          # Build number from git history so each TestFlight upload is unique
+          BUILD_NUMBER=$(git -C "$CM_BUILD_DIR" rev-list --count HEAD)
+          flutter build ipa --release \
+            --build-name=1.0.0 \
+            --build-number=$BUILD_NUMBER \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /Users/builder/Library/Developer/Xcode/DerivedData/**/Build/**/*.xcarchive
+    publishing:
+      app_store_connect:
+        # Values come from the "appstore_credentials" group above
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true       # ships to TestFlight automatically
+        # skip_testflight_build: false
+      email:
+        recipients:
+          - darijavan@gmail.com
+        notify:
+          success: true
+          failure: true

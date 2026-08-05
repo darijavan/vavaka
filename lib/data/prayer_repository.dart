@@ -12,8 +12,28 @@ class PrayerRepository {
   static const indexAssetPath = 'data/index.json';
 
   final AssetBundle _assetBundle;
+  Future<List<PrayerCategory>>? _categoriesFuture;
 
-  Future<List<PrayerCategory>> loadCategories() async {
+  Future<List<PrayerCategory>> loadCategories() {
+    final cached = _categoriesFuture;
+    if (cached != null) {
+      return cached;
+    }
+
+    final future = _loadCategoriesFromAssets();
+    _categoriesFuture = future;
+    future.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {
+        if (identical(_categoriesFuture, future)) {
+          _categoriesFuture = null;
+        }
+      },
+    );
+    return future;
+  }
+
+  Future<List<PrayerCategory>> _loadCategoriesFromAssets() async {
     final indexJson = await _loadJson(indexAssetPath);
     if (indexJson is! Map<String, dynamic>) {
       throw const FormatException('Prayer index must be a JSON object.');
@@ -39,6 +59,16 @@ class PrayerRepository {
   Future<List<Prayer>> loadAllPrayers() async {
     final categories = await loadCategories();
     return List.unmodifiable(categories.expand((category) => category.prayers));
+  }
+
+  Future<PrayerCategory> findCategoryBySlug(String slug) async {
+    final categories = await loadCategories();
+    for (final category in categories) {
+      if (category.slug == slug) {
+        return category;
+      }
+    }
+    throw FormatException('Unknown prayer category: $slug');
   }
 
   Future<Prayer?> findPrayerById(String id) async {
