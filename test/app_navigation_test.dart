@@ -35,10 +35,10 @@ class _SearchRepository extends PrayerRepository {
       id: 'search-result',
       title: 'Vavaka maraina',
       category: 'isanandro',
-      author: "'Abdu'l-Bahá",
+      author: "'Abdu'l-Bahá VAVAKA",
       content: PrayerContent(
         schema: 'dast',
-        paragraphs: ['Hazavao ny foko amin’ny fahazavanao.'],
+        paragraphs: ['Hazavao ny foko amin’ny vavaka sy ny fahazavanao.'],
       ),
     ),
   ];
@@ -95,7 +95,9 @@ void main() {
     expect(paragraphText().style?.fontSize, 20);
   });
 
-  testWidgets('searches prayer text and opens the reader', (tester) async {
+  testWidgets('debounces search and highlights matches case-insensitively', (
+    tester,
+  ) async {
     await tester.pumpWidget(MyApp(repository: _SearchRepository()));
     await tester.tap(find.byTooltip('Search prayers'));
     await pumpUntil(
@@ -103,9 +105,25 @@ void main() {
       find.text('Enter a word or phrase to search prayers.'),
     );
 
-    await tester.enterText(find.byType(TextField), 'FAHAZAVANAO');
+    await tester.enterText(find.byType(TextField), 'vAvAkA');
     await tester.pump();
+    expect(find.text('Vavaka maraina'), findsNothing);
+
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Vavaka maraina'), findsOneWidget);
+
+    final highlighted = tester
+        .widgetList<Text>(find.byType(Text))
+        .expand(
+          (text) => text.textSpan is TextSpan
+              ? (text.textSpan as TextSpan).children ?? const <InlineSpan>[]
+              : const <InlineSpan>[],
+        )
+        .whereType<TextSpan>()
+        .where((span) => span.style?.fontWeight == FontWeight.bold)
+        .map((span) => span.text)
+        .toList();
+    expect(highlighted, ['Vavaka', 'VAVAKA', 'vavaka']);
 
     await tester.tap(find.text('Vavaka maraina'));
     await pumpUntil(tester, find.textContaining('Hazavao ny foko'));
