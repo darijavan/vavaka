@@ -35,7 +35,7 @@ void main() {
       expect(categories[1].prayerCount, 5);
     });
 
-    test('keeps IDs unique and prayer paragraphs populated', () async {
+    test('keeps IDs unique and prayer paragraphs readable', () async {
       final prayers = await PrayerRepository().loadAllPrayers();
       final ids = prayers.map((prayer) => prayer.id).toSet();
 
@@ -43,6 +43,11 @@ void main() {
       for (final prayer in prayers) {
         expect(prayer.paragraphs, isNotEmpty, reason: prayer.id);
         expect(prayer.paragraphs, everyElement(isNotEmpty), reason: prayer.id);
+        expect(
+          prayer.paragraphs.join('\n'),
+          isNot(contains('\uFFFD')),
+          reason: '${prayer.id} contains an invalid replacement character',
+        );
       }
     });
 
