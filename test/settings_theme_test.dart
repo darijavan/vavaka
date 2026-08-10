@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vavaka/app.dart';
 import 'package:vavaka/data/theme_mode_store.dart';
-import 'package:vavaka/main.dart';
 
 class _MemoryThemeModeStore implements ThemeModeStore {
   _MemoryThemeModeStore(this.themeMode);

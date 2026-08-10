@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vavaka/app.dart';
 import 'package:vavaka/data/font_size_store.dart';
-import 'package:vavaka/main.dart';
 
 class _MemoryFontSizeStore implements FontSizeStore {
   _MemoryFontSizeStore(this.fontSize);

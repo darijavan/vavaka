@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vavaka/app.dart';
 import 'package:vavaka/data/models/prayer.dart';
 import 'package:vavaka/data/models/prayer_category.dart';
 import 'package:vavaka/data/prayer_repository.dart';
-import 'package:vavaka/main.dart';
+import 'package:vavaka/screens/category_detail_screen.dart';
+import 'package:vavaka/screens/category_list_screen.dart';
 
 class _MissingCategoryRepository extends PrayerRepository {
   @override

@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/font_size_store.dart';
 import 'package:vavaka/data/prayer_repository.dart';
-import 'package:vavaka/main.dart';
+import 'package:vavaka/screens/prayer_detail_screen.dart';
 
 Future<void> _pumpReader(WidgetTester tester) async {
   await tester.pumpWidget(

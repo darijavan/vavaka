@@ -5,7 +5,7 @@ import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/font_size_store.dart';
 import 'package:vavaka/data/prayer_repository.dart';
 import 'package:vavaka/data/prayer_sharer.dart';
-import 'package:vavaka/main.dart';
+import 'package:vavaka/screens/prayer_detail_screen.dart';
 
 class _RecordingPrayerSharer implements PrayerSharer {
   String? text;
