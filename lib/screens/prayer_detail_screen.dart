@@ -87,13 +87,26 @@ class PrayerDetailScreen extends HookWidget {
                     : () async {
                         final nextValue = !isBookmarked.value!;
                         isSavingBookmark.value = true;
-                        await bookmarkStore.setBookmarked(
-                          prayerId,
-                          bookmarked: nextValue,
-                        );
-                        if (context.mounted) {
-                          isBookmarked.value = nextValue;
-                          isSavingBookmark.value = false;
+                        try {
+                          await bookmarkStore.setBookmarked(
+                            prayerId,
+                            bookmarked: nextValue,
+                          );
+                          if (context.mounted) {
+                            isBookmarked.value = nextValue;
+                          }
+                        } catch (_) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Could not update bookmark.'),
+                              ),
+                            );
+                          }
+                        } finally {
+                          if (context.mounted) {
+                            isSavingBookmark.value = false;
+                          }
                         }
                       },
                 icon: Icon(
