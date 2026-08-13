@@ -31,6 +31,7 @@ class PrayerDetailScreen extends HookWidget {
     final fontSize = useState<double?>(null);
     final isBookmarked = useState<bool?>(null);
     final isSavingBookmark = useState(false);
+    final isSharing = useState(false);
     final future = useMemoized(() => repository.findPrayerById(prayerId), [
       repository,
       prayerId,
@@ -64,15 +65,32 @@ class PrayerDetailScreen extends HookWidget {
             actions: [
               IconButton(
                 tooltip: 'Share prayer',
-                onPressed: prayer == null
+                onPressed: prayer == null || isSharing.value
                     ? null
-                    : () => prayerSharer.share(
-                        [
-                          prayer.title,
-                          prayer.author,
-                          ...prayer.paragraphs,
-                        ].join('\n\n'),
-                      ),
+                    : () async {
+                        isSharing.value = true;
+                        try {
+                          await prayerSharer.share(
+                            [
+                              prayer.title,
+                              prayer.author,
+                              ...prayer.paragraphs,
+                            ].join('\n\n'),
+                          );
+                        } catch (_) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Could not share prayer.'),
+                              ),
+                            );
+                          }
+                        } finally {
+                          if (context.mounted) {
+                            isSharing.value = false;
+                          }
+                        }
+                      },
                 icon: const Icon(Icons.share),
               ),
               IconButton(

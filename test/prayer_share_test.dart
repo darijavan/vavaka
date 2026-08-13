@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/font_size_store.dart';
+import 'package:vavaka/data/models/prayer.dart';
 import 'package:vavaka/data/prayer_repository.dart';
 import 'package:vavaka/data/prayer_sharer.dart';
 import 'package:vavaka/screens/prayer_detail_screen.dart';
@@ -12,6 +15,30 @@ class _RecordingPrayerSharer implements PrayerSharer {
 
   @override
   Future<void> share(String text) async => this.text = text;
+}
+
+class _ControllablePrayerSharer implements PrayerSharer {
+  final calls = <Completer<void>>[];
+
+  @override
+  Future<void> share(String text) {
+    final call = Completer<void>();
+    calls.add(call);
+    return call.future;
+  }
+}
+
+class _ShareRepository extends PrayerRepository {
+  @override
+  Future<Prayer?> findPrayerById(String id) => Future.value(
+    Prayer(
+      id: id,
+      title: 'Vavaka fitsapana',
+      category: 'fitsapana',
+      author: "'Abdu'l-Bahá",
+      content: PrayerContent(schema: 'dast', paragraphs: ['Vavaka fitsapana.']),
+    ),
+  );
 }
 
 void main() {
@@ -45,5 +72,47 @@ void main() {
       sharer.text,
       [prayer!.title, prayer.author, ...prayer.paragraphs].join('\n\n'),
     );
+  });
+
+  testWidgets('recovers from a share failure and allows a successful retry', (
+    tester,
+  ) async {
+    final sharer = _ControllablePrayerSharer();
+    final repository = _ShareRepository();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: PrayerDetailScreen(
+          repository: repository,
+          bookmarkStore: SharedPreferencesBookmarkStore(),
+          fontSizeStore: SharedPreferencesFontSizeStore(),
+          prayerSharer: sharer,
+          prayerId: 'ankizy-01',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final shareButton = find.byTooltip('Share prayer');
+    await tester.tap(shareButton);
+    await tester.pump();
+    expect(sharer.calls, hasLength(1));
+
+    await tester.tap(shareButton);
+    await tester.pump();
+    expect(sharer.calls, hasLength(1));
+
+    sharer.calls.single.completeError(Exception('share failed'));
+    await tester.pump();
+
+    expect(find.text('Could not share prayer.'), findsOneWidget);
+
+    await tester.tap(shareButton);
+    await tester.pump();
+    expect(sharer.calls, hasLength(2));
+
+    sharer.calls.last.complete();
+    await tester.pump();
+    expect(tester.takeException(), isNull);
   });
 }
