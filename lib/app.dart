@@ -6,8 +6,10 @@ import 'data/bookmark_store.dart';
 import 'data/font_size_store.dart';
 import 'data/prayer_lists.dart';
 import 'data/prayer_repository.dart';
+import 'data/notification_scheduler.dart';
 import 'data/prayer_sharer.dart';
 import 'data/recent_store.dart';
+import 'data/reminders.dart';
 import 'data/theme_mode_store.dart';
 import 'screens/category_detail_screen.dart';
 import 'screens/category_list_screen.dart';
@@ -25,6 +27,8 @@ class MyApp extends HookWidget {
     this.repository,
     this.bookmarkStore,
     this.recentStore,
+    this.reminderStore,
+    this.reminderScheduler,
     this.fontSizeStore,
     this.themeModeStore,
     this.prayerSharer,
@@ -34,6 +38,8 @@ class MyApp extends HookWidget {
   final PrayerRepository? repository;
   final BookmarkStore? bookmarkStore;
   final RecentStore? recentStore;
+  final ReminderStore? reminderStore;
+  final ReminderScheduler? reminderScheduler;
   final FontSizeStore? fontSizeStore;
   final ThemeModeStore? themeModeStore;
   final PrayerSharer? prayerSharer;
@@ -55,6 +61,14 @@ class MyApp extends HookWidget {
       [recentStore],
     );
     useEffect(() => recentPrayers.dispose, [recentPrayers]);
+    final reminders = useMemoized(
+      () => Reminders(
+        reminderStore ?? SharedPreferencesReminderStore(),
+        reminderScheduler ?? LocalNotificationScheduler(),
+      ),
+      [reminderStore, reminderScheduler],
+    );
+    useEffect(() => reminders.dispose, [reminders]);
     final resolvedFontSizeStore = useMemoized(
       () => fontSizeStore ?? SharedPreferencesFontSizeStore(),
       [fontSizeStore],
@@ -159,7 +173,8 @@ class MyApp extends HookWidget {
                 routes: [
                   GoRoute(
                     path: '/reminders',
-                    builder: (context, state) => const RemindersScreen(),
+                    builder: (context, state) =>
+                        RemindersScreen(reminders: reminders),
                   ),
                 ],
               ),
@@ -184,6 +199,7 @@ class MyApp extends HookWidget {
         resolvedRepository,
         bookmarks,
         recentPrayers,
+        reminders,
         resolvedFontSizeStore,
         resolvedThemeModeStore,
         resolvedPrayerSharer,

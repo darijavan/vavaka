@@ -4,10 +4,11 @@ import '../theme.dart';
 
 /// Centred icon bubble with a short message, used by empty tabs.
 class EmptyState extends StatelessWidget {
-  const EmptyState({super.key, required this.icon, this.message});
+  const EmptyState({super.key, required this.icon, this.message, this.action});
 
   final IconData icon;
   final String? message;
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +34,7 @@ class EmptyState extends StatelessWidget {
                 ),
               ),
             ],
+            if (action != null) ...[const SizedBox(height: 24), action!],
           ],
         ),
       ),

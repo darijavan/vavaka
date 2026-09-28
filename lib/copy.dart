@@ -18,4 +18,16 @@ abstract final class Copy {
   static const prayerNotFound = 'Tsy hita ny vavaka.';
   static const loadFailed = 'Nisy olana tamin’ny fakana ny vavaka.';
   static const retry = 'Andramo indray';
+
+  // Reminders (Tsiahy). The list layout is in the Figma "07b · Reminders
+  // list" frames; the wording there is a draft too.
+  static const remindersLabel = "Fampahatsiahivana isan'andro";
+  static const daily = "Isan'andro";
+  static const addReminder = 'Hanampy fampahatsiahivana';
+  static const deleteReminder = 'Fafao';
+  static const permissionDenied =
+      'Tsy nahazo alalana handefa fampahatsiahivana.';
+  static const remindersChannel = 'Fampahatsiahivana';
+  static const reminderTitle = 'Fotoana hivavahana';
+  static const reminderBody = 'Andao hivavaka.';
 }
