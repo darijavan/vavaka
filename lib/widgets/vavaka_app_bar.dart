@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 import '../theme.dart';
 
 /// App bar from the Figma "AppBar" component: an optional leading control,
-/// the centred brand lockup, and optional trailing actions.
+/// the brand lockup (or a custom [title]), and optional trailing actions.
 class VavakaAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const VavakaAppBar({super.key, this.leading, this.actions = const []});
+  const VavakaAppBar({
+    super.key,
+    this.leading,
+    this.title = const BrandLockup(),
+    this.actions = const [],
+  });
 
   final Widget? leading;
+  final Widget title;
   final List<Widget> actions;
 
   @override
@@ -24,7 +30,8 @@ class VavakaAppBar extends StatelessWidget implements PreferredSizeWidget {
               padding: const EdgeInsets.only(left: 12),
               child: Align(alignment: Alignment.centerLeft, child: leading),
             ),
-      title: const BrandLockup(),
+      titleSpacing: 16,
+      title: title,
       actions: [...actions, const SizedBox(width: 8)],
     );
   }
@@ -43,10 +50,14 @@ class BrandLockup extends StatelessWidget {
           child: Image.asset('assets/images/logo.png', width: 22, height: 22),
         ),
         const SizedBox(width: 7),
-        Text(
-          'Vavaka',
-          style: VavakaText.brand.copyWith(
-            color: VavakaColors.of(context).text,
+        Flexible(
+          child: Text(
+            'Vavaka',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: VavakaText.brand.copyWith(
+              color: VavakaColors.of(context).text,
+            ),
           ),
         ),
       ],

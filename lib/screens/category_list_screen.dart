@@ -6,6 +6,7 @@ import '../data/models/prayer_category.dart';
 import '../data/prayer_repository.dart';
 import '../theme.dart';
 import '../widgets/error_message.dart';
+import '../widgets/split_view.dart';
 import '../widgets/vavaka_app_bar.dart';
 
 class CategoryListScreen extends HookWidget {
@@ -23,21 +24,21 @@ class CategoryListScreen extends HookWidget {
     final snapshot = useFuture(future);
     final colors = VavakaColors.of(context);
 
+    final settingsButton = IconButton(
+      tooltip: 'Settings',
+      onPressed: () => context.go('/settings'),
+      icon: const Icon(Icons.settings_outlined, size: 20),
+    );
+    final searchButton = IconButton(
+      tooltip: 'Search prayers',
+      onPressed: () => context.go('/search'),
+      icon: const Icon(Icons.search, size: 22),
+    );
+
     return Scaffold(
-      appBar: VavakaAppBar(
-        leading: IconButton(
-          tooltip: 'Settings',
-          onPressed: () => context.go('/settings'),
-          icon: const Icon(Icons.settings_outlined, size: 20),
-        ),
-        actions: [
-          IconButton(
-            tooltip: 'Search prayers',
-            onPressed: () => context.go('/search'),
-            icon: const Icon(Icons.search, size: 22),
-          ),
-        ],
-      ),
+      appBar: isInMasterPane(context)
+          ? VavakaAppBar(actions: [searchButton, settingsButton])
+          : VavakaAppBar(leading: settingsButton, actions: [searchButton]),
       body: switch (snapshot) {
         AsyncSnapshot(:final error?) => ErrorMessage(
           error: error,

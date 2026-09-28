@@ -21,6 +21,7 @@ class PrayerDetailScreen extends HookWidget {
     required this.fontSizeStore,
     this.prayerSharer = const PlatformPrayerSharer(),
     required this.prayerId,
+    this.embedded = false,
   });
 
   final PrayerRepository repository;
@@ -29,6 +30,9 @@ class PrayerDetailScreen extends HookWidget {
   final FontSizeStore fontSizeStore;
   final PrayerSharer prayerSharer;
   final String prayerId;
+
+  /// Shown in the tablet detail pane: no back navigation, category as title.
+  final bool embedded;
 
   static const _fontSizeStep = 2.0;
 
@@ -89,17 +93,27 @@ class PrayerDetailScreen extends HookWidget {
     }
 
     final canResize = prayer != null && fontSize.value != null;
+    final inset = embedded ? 40.0 : 16.0;
+    final colors = VavakaColors.of(context);
 
     return Scaffold(
       appBar: VavakaAppBar(
-        leading: BackAction(
-          label: categoryName,
-          onPressed: () => context.canPop()
-              ? context.pop()
-              : context.go(
-                  prayer == null ? '/' : '/categories/${prayer.category}',
-                ),
-        ),
+        leading: embedded
+            ? null
+            : BackAction(
+                label: categoryName,
+                onPressed: () => context.canPop()
+                    ? context.pop()
+                    : context.go(
+                        prayer == null ? '/' : '/categories/${prayer.category}',
+                      ),
+              ),
+        title: embedded
+            ? Text(
+                categoryName == null ? '' : 'Sokajy: $categoryName',
+                style: VavakaText.action.copyWith(color: colors.textSecondary),
+              )
+            : const BrandLockup(),
         actions: [
           if (prayer != null ||
               snapshot.connectionState != ConnectionState.done)
@@ -129,12 +143,12 @@ class PrayerDetailScreen extends HookWidget {
         _ when prayer == null || fontSize.value == null =>
           const SizedBox.shrink(),
         _ => ListView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.fromLTRB(inset, embedded ? 48 : 16, inset, 16),
           children: [_PrayerCard(prayer: prayer, fontSize: fontSize.value!)],
         ),
       },
       bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+        minimum: EdgeInsets.fromLTRB(inset, 0, inset, 20),
         child: _FontSizeBar(
           fontSize: fontSize.value,
           onDecrease:

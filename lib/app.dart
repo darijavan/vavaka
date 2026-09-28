@@ -17,7 +17,7 @@ import 'screens/saved_prayers_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/settings_screen.dart';
 import 'theme.dart';
-import 'widgets/vavaka_tab_bar.dart';
+import 'widgets/split_view.dart';
 
 class MyApp extends HookWidget {
   const MyApp({
@@ -81,14 +81,17 @@ class MyApp extends HookWidget {
         overridePlatformDefaultLocation: true,
         routes: [
           StatefulShellRoute.indexedStack(
-            builder: (context, state, shell) => Scaffold(
-              body: shell,
-              bottomNavigationBar: VavakaTabBar(
-                currentIndex: shell.currentIndex,
-                onSelected: (index) => shell.goBranch(
-                  index,
-                  initialLocation: index == shell.currentIndex,
-                ),
+            builder: (context, state, shell) => AdaptiveShell(
+              shell: shell,
+              readerBuilder: (prayerId) => PrayerDetailScreen(
+                key: ValueKey(prayerId),
+                repository: resolvedRepository,
+                bookmarks: bookmarks,
+                recentPrayers: recentPrayers,
+                fontSizeStore: resolvedFontSizeStore,
+                prayerSharer: resolvedPrayerSharer,
+                prayerId: prayerId,
+                embedded: true,
               ),
             ),
             branches: [

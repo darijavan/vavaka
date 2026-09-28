@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 
 import '../data/models/prayer.dart';
 import '../data/models/prayer_category.dart';
@@ -10,6 +9,7 @@ import '../widgets/empty_state.dart';
 import '../widgets/error_message.dart';
 import '../widgets/prayer_row.dart';
 import '../widgets/section_label.dart';
+import '../widgets/split_view.dart';
 import '../widgets/vavaka_app_bar.dart';
 
 /// "Tiana" tab: bookmarked prayers in dataset order.
@@ -142,7 +142,7 @@ class _PrayerIdList<T extends Iterable<String>> extends HookWidget {
             prayer: prayer,
             bookmarks: bookmarks,
             categoryName: categoryName,
-            onTap: () => context.push('/prayers/${prayer.id}'),
+            onTap: () => openPrayer(context, prayer.id),
           ),
         ],
       ],

@@ -22,23 +22,27 @@ class VavakaTabBar extends StatelessWidget {
     super.key,
     required this.currentIndex,
     required this.onSelected,
+    this.inPane = false,
   });
 
   final int currentIndex;
   final ValueChanged<int> onSelected;
 
+  /// In the tablet master pane the pill sits on the pane surface instead.
+  final bool inPane;
+
   @override
   Widget build(BuildContext context) {
     final colors = VavakaColors.of(context);
     return ColoredBox(
-      color: colors.background,
+      color: inPane ? colors.surface : colors.background,
       child: SafeArea(
         top: false,
         minimum: const EdgeInsets.only(bottom: 16),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
           child: Material(
-            color: colors.surface,
+            color: inPane ? colors.background : colors.surface,
             borderRadius: BorderRadius.circular(39),
             child: Padding(
               padding: const EdgeInsets.all(6),

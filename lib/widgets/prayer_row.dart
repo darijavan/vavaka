@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/models/prayer.dart';
 import '../data/prayer_lists.dart';
 import '../theme.dart';
+import 'split_view.dart';
 
 /// Prayer list row: title, "author · N teny" metadata and a bookmark star.
 class PrayerRow extends StatelessWidget {
@@ -34,38 +35,45 @@ class PrayerRow extends StatelessWidget {
       '${prayer.wordCount} teny',
     ].join(' · ');
 
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  HighlightedText(
-                    text: prayer.title,
-                    query: highlight,
-                    maxLines: 2,
-                    style: VavakaText.rowTitle.copyWith(color: colors.text),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    meta,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: VavakaText.caption.copyWith(
-                      color: colors.textSecondary,
+    final selected = PrayerSelection.maybeOf(context)?.value == prayer.id;
+
+    return Material(
+      color: selected ? colors.surfaceRaised : Colors.transparent,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    HighlightedText(
+                      text: prayer.title,
+                      query: highlight,
+                      maxLines: 2,
+                      style: VavakaText.rowTitle.copyWith(color: colors.text),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 6),
+                    Text(
+                      meta,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: VavakaText.caption.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            BookmarkStar(bookmarks: bookmarks, prayerId: prayer.id, size: 20),
-          ],
+              const SizedBox(width: 12),
+              BookmarkStar(bookmarks: bookmarks, prayerId: prayer.id, size: 20),
+            ],
+          ),
         ),
       ),
     );

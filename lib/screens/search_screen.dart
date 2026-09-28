@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 
 import '../data/models/prayer_category.dart';
 import '../data/prayer_lists.dart';
@@ -11,6 +10,7 @@ import '../theme.dart';
 import '../widgets/error_message.dart';
 import '../widgets/prayer_row.dart';
 import '../widgets/section_label.dart';
+import '../widgets/split_view.dart';
 import '../widgets/vavaka_app_bar.dart';
 
 class SearchScreen extends HookWidget {
@@ -128,7 +128,7 @@ class _Results extends StatelessWidget {
           bookmarks: bookmarks,
           categoryName: categoryName,
           highlight: query,
-          onTap: () => context.push('/prayers/${prayer.id}'),
+          onTap: () => openPrayer(context, prayer.id),
         );
       },
     );
