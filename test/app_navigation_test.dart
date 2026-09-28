@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vavaka/app.dart';
+import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/models/prayer.dart';
 import 'package:vavaka/data/models/prayer_category.dart';
+import 'package:vavaka/data/prayer_lists.dart';
 import 'package:vavaka/data/prayer_repository.dart';
 import 'package:vavaka/screens/category_detail_screen.dart';
 import 'package:vavaka/screens/category_list_screen.dart';
@@ -46,7 +48,9 @@ class _SearchRepository extends PrayerRepository {
   ];
 
   @override
-  Future<List<Prayer>> loadAllPrayers() => Future.value(prayers);
+  Future<List<PrayerCategory>> loadCategories() => Future.value([
+    PrayerCategory(slug: 'isanandro', name: 'Isanandro', prayers: prayers),
+  ]);
 }
 
 Future<void> pumpUntil(WidgetTester tester, Finder finder) async {
@@ -77,13 +81,14 @@ void main() {
 
     expect(find.text('Ankizy'), findsWidgets);
     expect(prayerTile, findsOneWidget);
-    expect(find.text("'Abdu'l-Bahá"), findsWidgets);
+    expect(find.textContaining("'Abdu'l-Bahá · 22 teny"), findsWidgets);
 
     await tester.tap(prayerTile);
     await pumpUntil(tester, find.textContaining('fanaovanjiro hanazava'));
+    await tester.pumpAndSettle();
 
     expect(find.textContaining('Ry Andriamanitro! Tariho aho'), findsWidgets);
-    expect(find.text("'Abdu'l-Bahá"), findsWidgets);
+    expect(find.text("— 'Abdu'l-Bahá"), findsOneWidget);
     expect(find.textContaining('fanaovanjiro hanazava'), findsOneWidget);
 
     final paragraph = find.textContaining('fanaovanjiro hanazava');
@@ -125,7 +130,8 @@ void main() {
         .where((span) => span.style?.fontWeight == FontWeight.bold)
         .map((span) => span.text)
         .toList();
-    expect(highlighted, ['Vavaka', 'VAVAKA', 'vavaka']);
+    expect(highlighted, ['Vavaka']);
+    expect(find.text('VALINY 1'), findsOneWidget);
 
     await tester.tap(find.text('Vavaka maraina'));
     await pumpUntil(tester, find.textContaining('Hazavao ny foko'));
@@ -153,6 +159,7 @@ void main() {
       MaterialApp(
         home: CategoryDetailScreen(
           repository: _MissingCategoryRepository(),
+          bookmarks: Bookmarks(SharedPreferencesBookmarkStore()),
           slug: 'does-not-exist',
         ),
       ),

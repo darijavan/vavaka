@@ -30,7 +30,7 @@ void main() {
     await tester.tap(find.byTooltip('Settings'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Settings'), findsOneWidget);
+    expect(find.text('Haben’ny soratra'), findsOneWidget);
     expect(find.text('24'), findsOneWidget);
 
     final slider = tester.widget<Slider>(find.byType(Slider));

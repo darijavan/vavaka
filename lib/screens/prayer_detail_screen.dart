@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 
-import '../data/bookmark_store.dart';
 import '../data/font_size_store.dart';
 import '../data/models/prayer.dart';
+import '../data/prayer_lists.dart';
 import '../data/prayer_repository.dart';
 import '../data/prayer_sharer.dart';
+import '../theme.dart';
 import '../widgets/error_message.dart';
+import '../widgets/prayer_row.dart';
+import '../widgets/vavaka_app_bar.dart';
 
 class PrayerDetailScreen extends HookWidget {
   const PrayerDetailScreen({
     super.key,
     required this.repository,
-    required this.bookmarkStore,
+    required this.bookmarks,
+    required this.recentPrayers,
     required this.fontSizeStore,
     this.prayerSharer = const PlatformPrayerSharer(),
     required this.prayerId,
   });
 
   final PrayerRepository repository;
-  final BookmarkStore bookmarkStore;
+  final Bookmarks bookmarks;
+  final RecentPrayers recentPrayers;
   final FontSizeStore fontSizeStore;
   final PrayerSharer prayerSharer;
   final String prayerId;
@@ -29,184 +35,226 @@ class PrayerDetailScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final fontSize = useState<double?>(null);
-    final isBookmarked = useState<bool?>(null);
-    final isSavingBookmark = useState(false);
     final isSharing = useState(false);
     final future = useMemoized(() => repository.findPrayerById(prayerId), [
       repository,
       prayerId,
     ]);
+    final snapshot = useFuture(future);
+    final prayer = snapshot.data;
+    final categoryName = useFuture(
+      useMemoized(
+        () => prayer == null
+            ? Future<String?>.value()
+            : repository
+                  .findCategoryBySlug(prayer.category)
+                  .then<String?>((category) => category.name)
+                  .catchError((Object _) => null),
+        [prayer],
+      ),
+    ).data;
     useEffect(() {
-      var active = true;
-      bookmarkStore.isBookmarked(prayerId).then((value) {
-        if (active) {
-          isBookmarked.value = value;
-        }
-      });
-      return () => active = false;
-    }, [bookmarkStore, prayerId]);
+      if (prayer != null) recentPrayers.add(prayer.id).ignore();
+      return null;
+    }, [prayer]);
     useEffect(() {
       var active = true;
       fontSizeStore.loadFontSize().then((value) {
-        if (active) {
-          fontSize.value = value;
-        }
+        if (active) fontSize.value = value;
       });
       return () => active = false;
     }, [fontSizeStore]);
 
-    return FutureBuilder<Prayer?>(
-      future: future,
-      builder: (context, snapshot) {
-        final prayer = snapshot.data;
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(prayer?.title ?? 'Vavaka'),
-            actions: [
-              IconButton(
-                tooltip: 'Share prayer',
-                onPressed: prayer == null || isSharing.value
-                    ? null
-                    : () async {
-                        isSharing.value = true;
-                        try {
-                          await prayerSharer.share(
-                            [
-                              prayer.title,
-                              prayer.author,
-                              ...prayer.paragraphs,
-                            ].join('\n\n'),
-                          );
-                        } catch (_) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Could not share prayer.'),
-                              ),
-                            );
-                          }
-                        } finally {
-                          if (context.mounted) {
-                            isSharing.value = false;
-                          }
-                        }
-                      },
-                icon: const Icon(Icons.share),
-              ),
-              IconButton(
-                tooltip: isBookmarked.value == true
-                    ? 'Remove bookmark'
-                    : 'Bookmark prayer',
-                onPressed:
-                    prayer == null ||
-                        isBookmarked.value == null ||
-                        isSavingBookmark.value
-                    ? null
-                    : () async {
-                        final nextValue = !isBookmarked.value!;
-                        isSavingBookmark.value = true;
-                        try {
-                          await bookmarkStore.setBookmarked(
-                            prayerId,
-                            bookmarked: nextValue,
-                          );
-                          if (context.mounted) {
-                            isBookmarked.value = nextValue;
-                          }
-                        } catch (_) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Could not update bookmark.'),
-                              ),
-                            );
-                          }
-                        } finally {
-                          if (context.mounted) {
-                            isSavingBookmark.value = false;
-                          }
-                        }
-                      },
-                icon: Icon(
-                  isBookmarked.value == true
-                      ? Icons.bookmark
-                      : Icons.bookmark_border,
+    Future<void> share(Prayer prayer) async {
+      isSharing.value = true;
+      try {
+        await prayerSharer.share(
+          [prayer.title, prayer.author, ...prayer.paragraphs].join('\n\n'),
+        );
+      } catch (_) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not share prayer.')),
+          );
+        }
+      } finally {
+        if (context.mounted) isSharing.value = false;
+      }
+    }
+
+    void changeFontSize(double delta) {
+      final nextValue = fontSize.value! + delta;
+      fontSize.value = nextValue;
+      fontSizeStore.saveFontSize(nextValue);
+    }
+
+    final canResize = prayer != null && fontSize.value != null;
+
+    return Scaffold(
+      appBar: VavakaAppBar(
+        leading: BackAction(
+          label: categoryName,
+          onPressed: () => context.canPop()
+              ? context.pop()
+              : context.go(
+                  prayer == null ? '/' : '/categories/${prayer.category}',
+                ),
+        ),
+        actions: [
+          if (prayer != null ||
+              snapshot.connectionState != ConnectionState.done)
+            BookmarkStar(bookmarks: bookmarks, prayerId: prayerId),
+          PopupMenuButton<void>(
+            tooltip: 'More options',
+            enabled: prayer != null,
+            icon: const Icon(Icons.more_vert),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                enabled: !isSharing.value,
+                onTap: () => share(prayer!),
+                child: const ListTile(
+                  leading: Icon(Icons.share_outlined),
+                  title: Text('Zarao'),
                 ),
               ),
             ],
           ),
-          body: _buildBody(snapshot, fontSize: fontSize.value),
-          bottomNavigationBar: SafeArea(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  tooltip: 'Decrease text size',
-                  onPressed:
-                      prayer != null &&
-                          fontSize.value != null &&
-                          fontSize.value! > FontSizeStore.minimumFontSize
-                      ? () {
-                          final nextValue = fontSize.value! - _fontSizeStep;
-                          fontSize.value = nextValue;
-                          fontSizeStore.saveFontSize(nextValue);
-                        }
-                      : null,
-                  icon: const Icon(Icons.text_decrease),
-                ),
-                IconButton(
-                  tooltip: 'Increase text size',
-                  onPressed:
-                      prayer != null &&
-                          fontSize.value != null &&
-                          fontSize.value! < FontSizeStore.maximumFontSize
-                      ? () {
-                          final nextValue = fontSize.value! + _fontSizeStep;
-                          fontSize.value = nextValue;
-                          fontSizeStore.saveFontSize(nextValue);
-                        }
-                      : null,
-                  icon: const Icon(Icons.text_increase),
-                ),
-              ],
-            ),
-          ),
-        );
+        ],
+      ),
+      body: switch (snapshot) {
+        AsyncSnapshot(:final error?) => ErrorMessage(error: error),
+        AsyncSnapshot(connectionState: ConnectionState.done)
+            when prayer == null =>
+          const Center(child: Text('Prayer not found.')),
+        _ when prayer == null || fontSize.value == null =>
+          const SizedBox.shrink(),
+        _ => ListView(
+          padding: const EdgeInsets.all(16),
+          children: [_PrayerCard(prayer: prayer, fontSize: fontSize.value!)],
+        ),
       },
+      bottomNavigationBar: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+        child: _FontSizeBar(
+          fontSize: fontSize.value,
+          onDecrease:
+              canResize && fontSize.value! > FontSizeStore.minimumFontSize
+              ? () => changeFontSize(-_fontSizeStep)
+              : null,
+          onIncrease:
+              canResize && fontSize.value! < FontSizeStore.maximumFontSize
+              ? () => changeFontSize(_fontSizeStep)
+              : null,
+        ),
+      ),
     );
   }
+}
 
-  Widget _buildBody(
-    AsyncSnapshot<Prayer?> snapshot, {
-    required double? fontSize,
-  }) {
-    if (snapshot.hasError) {
-      return ErrorMessage(error: snapshot.error!);
-    }
-    if (!snapshot.hasData || fontSize == null) {
-      return const Center(child: Text('Loading…'));
-    }
+class _PrayerCard extends StatelessWidget {
+  const _PrayerCard({required this.prayer, required this.fontSize});
 
-    final prayer = snapshot.data;
-    if (prayer == null) {
-      return const Center(child: Text('Prayer not found.'));
-    }
+  final Prayer prayer;
+  final double fontSize;
 
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        Text(prayer.title, style: const TextStyle(fontSize: 24)),
-        const SizedBox(height: 8),
-        Text(
-          prayer.author,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 24),
-        for (final paragraph in prayer.paragraphs) ...[
-          Text(paragraph, style: TextStyle(fontSize: fontSize, height: 1.5)),
-          const SizedBox(height: 16),
+  @override
+  Widget build(BuildContext context) {
+    final colors = VavakaColors.of(context);
+    final paragraphStyle = TextStyle(
+      fontFamily: readingFont,
+      fontSize: fontSize,
+      height: 1.7,
+      color: colors.readerText,
+    );
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14000000),
+            offset: Offset(0, 2),
+            blurRadius: 4,
+          ),
         ],
-      ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final (index, paragraph) in prayer.paragraphs.indexed)
+              Padding(
+                padding: EdgeInsets.only(top: index == 0 ? 0 : 18),
+                child: Text(paragraph, style: paragraphStyle),
+              ),
+            Padding(
+              padding: const EdgeInsets.only(top: 24),
+              child: Text(
+                '— ${prayer.author}',
+                textAlign: TextAlign.right,
+                style: VavakaText.attribution.copyWith(color: colors.text),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FontSizeBar extends StatelessWidget {
+  const _FontSizeBar({
+    required this.fontSize,
+    required this.onDecrease,
+    required this.onIncrease,
+  });
+
+  final double? fontSize;
+  final VoidCallback? onDecrease;
+  final VoidCallback? onIncrease;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = VavakaColors.of(context);
+    TextStyle labelStyle(VoidCallback? onPressed) => TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w700,
+      color: onPressed == null ? colors.textMuted : colors.text,
+    );
+
+    return Container(
+      height: 54,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: colors.surfaceRaised,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            tooltip: 'Decrease text size',
+            onPressed: onDecrease,
+            icon: Text('A−', style: labelStyle(onDecrease)),
+          ),
+          Text(
+            fontSize?.round().toString() ?? '',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              fontFeatures: const [FontFeature.tabularFigures()],
+              color: colors.accent,
+            ),
+          ),
+          IconButton(
+            tooltip: 'Increase text size',
+            onPressed: onIncrease,
+            icon: Text('A+', style: labelStyle(onIncrease)),
+          ),
+        ],
+      ),
     );
   }
 }

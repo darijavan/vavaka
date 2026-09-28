@@ -5,9 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/font_size_store.dart';
+import 'package:vavaka/data/prayer_lists.dart';
 import 'package:vavaka/data/models/prayer.dart';
 import 'package:vavaka/data/prayer_repository.dart';
 import 'package:vavaka/data/prayer_sharer.dart';
+import 'package:vavaka/data/recent_store.dart';
 import 'package:vavaka/screens/prayer_detail_screen.dart';
 
 class _RecordingPrayerSharer implements PrayerSharer {
@@ -41,6 +43,13 @@ class _ShareRepository extends PrayerRepository {
   );
 }
 
+Future<void> _tapShare(WidgetTester tester) async {
+  await tester.tap(find.byTooltip('More options'));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('Zarao'));
+  await tester.pumpAndSettle();
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() => SharedPreferences.setMockInitialValues({}));
@@ -56,7 +65,8 @@ void main() {
       MaterialApp(
         home: PrayerDetailScreen(
           repository: repository,
-          bookmarkStore: SharedPreferencesBookmarkStore(),
+          bookmarks: Bookmarks(SharedPreferencesBookmarkStore()),
+          recentPrayers: RecentPrayers(SharedPreferencesRecentStore()),
           fontSizeStore: SharedPreferencesFontSizeStore(),
           prayerSharer: sharer,
           prayerId: 'ankizy-01',
@@ -65,8 +75,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Share prayer'));
-    await tester.pump();
+    await _tapShare(tester);
 
     expect(
       sharer.text,
@@ -84,7 +93,8 @@ void main() {
       MaterialApp(
         home: PrayerDetailScreen(
           repository: repository,
-          bookmarkStore: SharedPreferencesBookmarkStore(),
+          bookmarks: Bookmarks(SharedPreferencesBookmarkStore()),
+          recentPrayers: RecentPrayers(SharedPreferencesRecentStore()),
           fontSizeStore: SharedPreferencesFontSizeStore(),
           prayerSharer: sharer,
           prayerId: 'ankizy-01',
@@ -93,22 +103,29 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final shareButton = find.byTooltip('Share prayer');
-    await tester.tap(shareButton);
-    await tester.pump();
+    await _tapShare(tester);
     expect(sharer.calls, hasLength(1));
 
-    await tester.tap(shareButton);
-    await tester.pump();
+    // While the first share is pending, the menu entry is disabled.
+    await tester.tap(find.byTooltip('More options'));
+    await tester.pumpAndSettle();
+    final shareItem = find.ancestor(
+      of: find.text('Zarao'),
+      matching: find.byType(PopupMenuItem<void>),
+    );
+    expect(tester.widget<PopupMenuItem<void>>(shareItem).enabled, isFalse);
+    await tester.tap(find.text('Zarao'), warnIfMissed: false);
+    await tester.pumpAndSettle();
     expect(sharer.calls, hasLength(1));
+    await tester.tapAt(const Offset(8, 8));
+    await tester.pumpAndSettle();
 
     sharer.calls.single.completeError(Exception('share failed'));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text('Could not share prayer.'), findsOneWidget);
 
-    await tester.tap(shareButton);
-    await tester.pump();
+    await _tapShare(tester);
     expect(sharer.calls, hasLength(2));
 
     sharer.calls.last.complete();

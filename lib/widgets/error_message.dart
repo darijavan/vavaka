@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
-class ErrorMessage extends HookWidget {
+class ErrorMessage extends StatelessWidget {
   const ErrorMessage({super.key, required this.error, this.onRetry});
 
   final Object error;
@@ -15,7 +14,7 @@ class ErrorMessage extends HookWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Could not load prayers: $error'),
+            Text('Could not load prayers: $error', textAlign: TextAlign.center),
             if (onRetry != null) ...[
               const SizedBox(height: 16),
               FilledButton(onPressed: onRetry, child: const Text('Try again')),

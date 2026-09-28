@@ -39,7 +39,7 @@ void main() {
       isFalse,
     );
 
-    await tester.tap(find.text('Dark theme'));
+    await tester.tap(find.text('Endrika maizina'));
     await tester.pumpAndSettle();
 
     expect(store.themeMode, ThemeMode.dark);
@@ -48,7 +48,7 @@ void main() {
       ThemeMode.dark,
     );
     expect(
-      Theme.of(tester.element(find.text('Settings'))).brightness,
+      Theme.of(tester.element(find.text('Endrika maizina'))).brightness,
       Brightness.dark,
     );
   });

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/font_size_store.dart';
+import 'package:vavaka/data/prayer_lists.dart';
 import 'package:vavaka/data/prayer_repository.dart';
+import 'package:vavaka/data/recent_store.dart';
 import 'package:vavaka/screens/prayer_detail_screen.dart';
 
 class _MemoryFontSizeStore implements FontSizeStore {
@@ -39,7 +41,8 @@ Future<void> _pumpReader(
     MaterialApp(
       home: PrayerDetailScreen(
         repository: PrayerRepository(),
-        bookmarkStore: SharedPreferencesBookmarkStore(),
+        bookmarks: Bookmarks(SharedPreferencesBookmarkStore()),
+        recentPrayers: RecentPrayers(SharedPreferencesRecentStore()),
         fontSizeStore: fontSizeStore,
         prayerId: 'ankizy-01',
       ),

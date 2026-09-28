@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/font_size_store.dart';
+import 'package:vavaka/data/prayer_lists.dart';
 import 'package:vavaka/data/prayer_repository.dart';
+import 'package:vavaka/data/recent_store.dart';
 import 'package:vavaka/screens/prayer_detail_screen.dart';
 
 Future<void> _pumpReader(WidgetTester tester) async {
@@ -11,7 +13,8 @@ Future<void> _pumpReader(WidgetTester tester) async {
     MaterialApp(
       home: PrayerDetailScreen(
         repository: PrayerRepository(),
-        bookmarkStore: SharedPreferencesBookmarkStore(),
+        bookmarks: Bookmarks(SharedPreferencesBookmarkStore()),
+        recentPrayers: RecentPrayers(SharedPreferencesRecentStore()),
         fontSizeStore: SharedPreferencesFontSizeStore(),
         prayerId: 'ankizy-01',
       ),
@@ -55,6 +58,6 @@ void main() {
     await _pumpReader(tester);
 
     expect(find.byTooltip('Remove bookmark'), findsOneWidget);
-    expect(find.byIcon(Icons.bookmark), findsOneWidget);
+    expect(find.byIcon(Icons.star), findsOneWidget);
   });
 }
