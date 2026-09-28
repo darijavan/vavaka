@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vavaka/copy.dart';
 import 'package:vavaka/app.dart';
 import 'package:vavaka/data/theme_mode_store.dart';
 
@@ -27,7 +28,7 @@ void main() {
     await tester.pumpWidget(MyApp(themeModeStore: store));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Settings'));
+    await tester.tap(find.byTooltip(Copy.settings));
     await tester.pumpAndSettle();
 
     expect(

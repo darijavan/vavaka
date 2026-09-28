@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vavaka/copy.dart';
 import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/font_size_store.dart';
 import 'package:vavaka/data/prayer_lists.dart';
@@ -44,7 +45,7 @@ class _ShareRepository extends PrayerRepository {
 }
 
 Future<void> _tapShare(WidgetTester tester) async {
-  await tester.tap(find.byTooltip('More options'));
+  await tester.tap(find.byTooltip(Copy.moreOptions));
   await tester.pumpAndSettle();
   await tester.tap(find.text('Zarao'));
   await tester.pumpAndSettle();
@@ -107,7 +108,7 @@ void main() {
     expect(sharer.calls, hasLength(1));
 
     // While the first share is pending, the menu entry is disabled.
-    await tester.tap(find.byTooltip('More options'));
+    await tester.tap(find.byTooltip(Copy.moreOptions));
     await tester.pumpAndSettle();
     final shareItem = find.ancestor(
       of: find.text('Zarao'),
@@ -123,7 +124,7 @@ void main() {
     sharer.calls.single.completeError(Exception('share failed'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Could not share prayer.'), findsOneWidget);
+    expect(find.text(Copy.shareFailed), findsOneWidget);
 
     await _tapShare(tester);
     expect(sharer.calls, hasLength(2));

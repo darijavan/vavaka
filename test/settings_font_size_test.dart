@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vavaka/copy.dart';
 import 'package:vavaka/app.dart';
 import 'package:vavaka/data/font_size_store.dart';
 
@@ -27,7 +28,7 @@ void main() {
     await tester.pumpWidget(MyApp(fontSizeStore: store));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Settings'));
+    await tester.tap(find.byTooltip(Copy.settings));
     await tester.pumpAndSettle();
 
     expect(find.text('Haben’ny soratra'), findsOneWidget);

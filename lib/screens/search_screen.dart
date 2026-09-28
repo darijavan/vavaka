@@ -1,17 +1,18 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import '../copy.dart';
 import '../data/models/prayer_category.dart';
 import '../data/prayer_lists.dart';
 import '../data/prayer_repository.dart';
 import '../theme.dart';
+import '../widgets/empty_state.dart';
 import '../widgets/error_message.dart';
 import '../widgets/prayer_row.dart';
 import '../widgets/section_label.dart';
 import '../widgets/split_view.dart';
 import '../widgets/vavaka_app_bar.dart';
+import 'dart:async';
 
 class SearchScreen extends HookWidget {
   const SearchScreen({
@@ -52,7 +53,7 @@ class SearchScreen extends HookWidget {
               autofocus: true,
               style: VavakaText.callout.copyWith(color: colors.text),
               decoration: InputDecoration(
-                hintText: 'Search prayers',
+                hintText: Copy.searchPrayers,
                 hintStyle: TextStyle(color: colors.textMuted),
                 prefixIcon: Icon(Icons.search, color: colors.textMuted),
                 filled: true,
@@ -97,9 +98,7 @@ class _Results extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (query.isEmpty) {
-      return const Center(
-        child: Text('Enter a word or phrase to search prayers.'),
-      );
+      return const EmptyState(icon: Icons.search, message: Copy.searchPrompt);
     }
 
     final matches = [
@@ -111,7 +110,7 @@ class _Results extends StatelessWidget {
             (prayer, category.name),
     ];
     if (matches.isEmpty) {
-      return const Center(child: Text('No prayers found.'));
+      return const EmptyState(icon: Icons.search_off, message: Copy.noResults);
     }
 
     return ListView.separated(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vavaka/copy.dart';
 import 'package:vavaka/app.dart';
 import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/models/prayer.dart';
@@ -95,7 +96,7 @@ void main() {
     Text paragraphText() => tester.widget<Text>(paragraph);
 
     expect(paragraphText().style?.fontSize, 18);
-    final increaseButton = find.byTooltip('Increase text size');
+    final increaseButton = find.byTooltip(Copy.increaseTextSize);
     await tester.ensureVisible(increaseButton);
     await tester.tap(increaseButton);
     await tester.pump();
@@ -106,11 +107,8 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(MyApp(repository: _SearchRepository()));
-    await tester.tap(find.byTooltip('Search prayers'));
-    await pumpUntil(
-      tester,
-      find.text('Enter a word or phrase to search prayers.'),
-    );
+    await tester.tap(find.byTooltip(Copy.searchPrayers));
+    await pumpUntil(tester, find.text(Copy.searchPrompt));
 
     await tester.enterText(find.byType(TextField), 'vAvAkA');
     await tester.pump();
@@ -147,7 +145,7 @@ void main() {
     );
     await pumpUntil(tester, find.textContaining('Temporary asset failure'));
 
-    await tester.tap(find.text('Try again'));
+    await tester.tap(find.text(Copy.retry));
     await pumpUntil(tester, find.text('Loaded categories'));
 
     expect(repository.attempts, 2);

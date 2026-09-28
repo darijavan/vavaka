@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../copy.dart';
 import '../data/models/prayer.dart';
 import '../data/prayer_lists.dart';
 import '../theme.dart';
@@ -100,7 +101,7 @@ class BookmarkStar extends StatelessWidget {
       builder: (context, ids, _) {
         final bookmarked = ids?.contains(prayerId) ?? false;
         return IconButton(
-          tooltip: bookmarked ? 'Remove bookmark' : 'Bookmark prayer',
+          tooltip: bookmarked ? Copy.removeBookmark : Copy.bookmark,
           visualDensity: VisualDensity.compact,
           constraints: BoxConstraints.tight(Size.square(size + 12)),
           padding: EdgeInsets.zero,
@@ -110,9 +111,7 @@ class BookmarkStar extends StatelessWidget {
               : () => bookmarks.toggle(prayerId).catchError((Object _) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Could not update bookmark.'),
-                      ),
+                      const SnackBar(content: Text(Copy.bookmarkFailed)),
                     );
                   }
                 }),

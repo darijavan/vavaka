@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../copy.dart';
+
 class ErrorMessage extends StatelessWidget {
   const ErrorMessage({super.key, required this.error, this.onRetry});
 
@@ -14,10 +16,16 @@ class ErrorMessage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Could not load prayers: $error', textAlign: TextAlign.center),
+            Text(Copy.loadFailed, textAlign: TextAlign.center),
+            const SizedBox(height: 8),
+            Text(
+              '$error',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
             if (onRetry != null) ...[
               const SizedBox(height: 16),
-              FilledButton(onPressed: onRetry, child: const Text('Try again')),
+              FilledButton(onPressed: onRetry, child: const Text(Copy.retry)),
             ],
           ],
         ),

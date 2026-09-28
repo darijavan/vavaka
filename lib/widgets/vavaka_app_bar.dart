@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../copy.dart';
 import '../theme.dart';
 
 /// App bar from the Figma "AppBar" component: an optional leading control,
@@ -77,7 +78,7 @@ class BackAction extends StatelessWidget {
     final color = VavakaColors.of(context).text;
     return Semantics(
       button: true,
-      label: 'Back',
+      label: Copy.back,
       child: InkWell(
         onTap: onPressed,
         borderRadius: BorderRadius.circular(8),

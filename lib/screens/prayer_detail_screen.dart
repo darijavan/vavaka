@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
+import '../copy.dart';
 import '../data/font_size_store.dart';
 import '../data/models/prayer.dart';
 import '../data/prayer_lists.dart';
@@ -77,9 +78,9 @@ class PrayerDetailScreen extends HookWidget {
         );
       } catch (_) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Could not share prayer.')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text(Copy.shareFailed)));
         }
       } finally {
         if (context.mounted) isSharing.value = false;
@@ -119,7 +120,7 @@ class PrayerDetailScreen extends HookWidget {
               snapshot.connectionState != ConnectionState.done)
             BookmarkStar(bookmarks: bookmarks, prayerId: prayerId),
           PopupMenuButton<void>(
-            tooltip: 'More options',
+            tooltip: Copy.moreOptions,
             enabled: prayer != null,
             icon: const Icon(Icons.more_vert),
             itemBuilder: (context) => [
@@ -139,7 +140,7 @@ class PrayerDetailScreen extends HookWidget {
         AsyncSnapshot(:final error?) => ErrorMessage(error: error),
         AsyncSnapshot(connectionState: ConnectionState.done)
             when prayer == null =>
-          const Center(child: Text('Prayer not found.')),
+          const Center(child: Text(Copy.prayerNotFound)),
         _ when prayer == null || fontSize.value == null =>
           const SizedBox.shrink(),
         _ => ListView(
@@ -249,7 +250,7 @@ class _FontSizeBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            tooltip: 'Decrease text size',
+            tooltip: Copy.decreaseTextSize,
             onPressed: onDecrease,
             icon: Text('A−', style: labelStyle(onDecrease)),
           ),
@@ -263,7 +264,7 @@ class _FontSizeBar extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Increase text size',
+            tooltip: Copy.increaseTextSize,
             onPressed: onIncrease,
             icon: Text('A+', style: labelStyle(onIncrease)),
           ),

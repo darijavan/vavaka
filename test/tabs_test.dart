@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vavaka/copy.dart';
 import 'package:vavaka/app.dart';
 import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/recent_store.dart';
@@ -30,10 +31,11 @@ void main() {
     expect(find.text('1 VAVAKA VOATAHIRY'), findsOneWidget);
     expect(find.textContaining('Ry Andriamanitro! Tariho aho'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('Remove bookmark'));
+    await tester.tap(find.byTooltip(Copy.removeBookmark));
     await tester.pumpAndSettle();
 
     expect(find.text('0 VAVAKA VOATAHIRY'), findsOneWidget);
+    expect(find.text(Copy.favoritesEmpty), findsOneWidget);
     expect(await SharedPreferencesBookmarkStore().loadBookmarkedIds(), isEmpty);
   });
 

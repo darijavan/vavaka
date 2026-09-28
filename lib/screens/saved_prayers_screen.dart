@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import '../copy.dart';
 import '../data/models/prayer.dart';
 import '../data/models/prayer_category.dart';
 import '../data/prayer_lists.dart';
@@ -35,7 +36,10 @@ class FavoritesScreen extends StatelessWidget {
             if (ids.contains(prayer.id)) (prayer, null),
       ],
       label: (count) => '$count vavaka voatahiry',
-      empty: const EmptyState(icon: Icons.star_border),
+      empty: const EmptyState(
+        icon: Icons.star_border,
+        message: Copy.favoritesEmpty,
+      ),
     );
   }
 }

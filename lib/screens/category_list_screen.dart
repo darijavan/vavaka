@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
+import '../copy.dart';
 import '../data/models/prayer_category.dart';
 import '../data/prayer_repository.dart';
 import '../theme.dart';
@@ -25,12 +26,12 @@ class CategoryListScreen extends HookWidget {
     final colors = VavakaColors.of(context);
 
     final settingsButton = IconButton(
-      tooltip: 'Settings',
+      tooltip: Copy.settings,
       onPressed: () => context.go('/settings'),
       icon: const Icon(Icons.settings_outlined, size: 20),
     );
     final searchButton = IconButton(
-      tooltip: 'Search prayers',
+      tooltip: Copy.searchPrayers,
       onPressed: () => context.go('/search'),
       icon: const Icon(Icons.search, size: 22),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vavaka/copy.dart';
 import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/font_size_store.dart';
 import 'package:vavaka/data/prayer_lists.dart';
@@ -30,23 +31,23 @@ void main() {
   testWidgets('bookmarks and unbookmarks the current prayer', (tester) async {
     await _pumpReader(tester);
 
-    await tester.tap(find.byTooltip('Bookmark prayer'));
+    await tester.tap(find.byTooltip(Copy.bookmark));
     await tester.pumpAndSettle();
 
     expect(
       await SharedPreferencesBookmarkStore().isBookmarked('ankizy-01'),
       isTrue,
     );
-    expect(find.byTooltip('Remove bookmark'), findsOneWidget);
+    expect(find.byTooltip(Copy.removeBookmark), findsOneWidget);
 
-    await tester.tap(find.byTooltip('Remove bookmark'));
+    await tester.tap(find.byTooltip(Copy.removeBookmark));
     await tester.pumpAndSettle();
 
     expect(
       await SharedPreferencesBookmarkStore().isBookmarked('ankizy-01'),
       isFalse,
     );
-    expect(find.byTooltip('Bookmark prayer'), findsOneWidget);
+    expect(find.byTooltip(Copy.bookmark), findsOneWidget);
   });
 
   testWidgets('loads an existing bookmark when the reader opens', (
@@ -57,7 +58,7 @@ void main() {
     });
     await _pumpReader(tester);
 
-    expect(find.byTooltip('Remove bookmark'), findsOneWidget);
+    expect(find.byTooltip(Copy.removeBookmark), findsOneWidget);
     expect(find.byIcon(Icons.star), findsOneWidget);
   });
 }
