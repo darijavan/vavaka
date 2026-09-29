@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
-import '../data/font_size_store.dart';
+import '../copy.dart';
 import '../data/models/prayer_category.dart';
 import '../data/prayer_repository.dart';
+import '../theme.dart';
 import '../widgets/error_message.dart';
+import '../widgets/split_view.dart';
+import '../widgets/vavaka_app_bar.dart';
 
 class CategoryListScreen extends HookWidget {
-  const CategoryListScreen({
-    super.key,
-    required this.repository,
-    this.fontSizeStore,
-  });
+  const CategoryListScreen({super.key, required this.repository});
 
   final PrayerRepository repository;
-  final FontSizeStore? fontSizeStore;
 
   @override
   Widget build(BuildContext context) {
@@ -24,55 +22,71 @@ class CategoryListScreen extends HookWidget {
       repository,
       retryAttempt.value,
     ]);
+    final snapshot = useFuture(future);
+    final colors = VavakaColors.of(context);
+
+    final settingsButton = IconButton(
+      tooltip: Copy.settings,
+      onPressed: () => context.go('/settings'),
+      icon: const Icon(Icons.settings_outlined, size: 20),
+    );
+    final searchButton = IconButton(
+      tooltip: Copy.searchPrayers,
+      onPressed: () => context.go('/search'),
+      icon: const Icon(Icons.search, size: 22),
+    );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Vavaka'),
-        actions: [
-          IconButton(
-            tooltip: 'Search prayers',
-            onPressed: () => context.go('/search'),
-            icon: const Icon(Icons.search),
-          ),
-          if (fontSizeStore != null)
-            IconButton(
-              tooltip: 'Settings',
-              onPressed: () => context.go('/settings'),
-              icon: const Icon(Icons.settings),
-            ),
-        ],
-      ),
-      body: FutureBuilder<List<PrayerCategory>>(
-        future: future,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return ErrorMessage(
-              error: snapshot.error!,
-              onRetry: () => retryAttempt.value++,
-            );
-          }
-          if (!snapshot.hasData) {
-            return const Center(child: Text('Loading…'));
-          }
-
-          final categories = snapshot.data!;
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                for (final category in categories) ...[
-                  ListTile(
-                    title: Text(category.name),
-                    subtitle: Text('${category.prayerCount} vavaka'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => context.go('/categories/${category.slug}'),
+      appBar: isInMasterPane(context)
+          ? VavakaAppBar(actions: [searchButton, settingsButton])
+          : VavakaAppBar(leading: settingsButton, actions: [searchButton]),
+      body: switch (snapshot) {
+        AsyncSnapshot(:final error?) => ErrorMessage(
+          error: error,
+          onRetry: () => retryAttempt.value++,
+        ),
+        AsyncSnapshot(data: final List<PrayerCategory> categories) =>
+          ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            itemCount: categories.length,
+            separatorBuilder: (context, index) =>
+                const Divider(height: 1, indent: 8, endIndent: 8),
+            itemBuilder: (context, index) {
+              final category = categories[index];
+              return InkWell(
+                onTap: () => context.go('/categories/${category.slug}'),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 11,
                   ),
-                  const Divider(height: 1),
-                ],
-              ],
-            ),
-          );
-        },
-      ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          category.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: VavakaText.callout.copyWith(
+                            color: colors.text,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        '${category.prayerCount}',
+                        style: VavakaText.caption.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        _ => const SizedBox.shrink(),
+      },
     );
   }
 }

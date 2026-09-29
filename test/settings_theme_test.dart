@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vavaka/copy.dart';
 import 'package:vavaka/app.dart';
 import 'package:vavaka/data/theme_mode_store.dart';
 
@@ -27,7 +28,7 @@ void main() {
     await tester.pumpWidget(MyApp(themeModeStore: store));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Settings'));
+    await tester.tap(find.byTooltip(Copy.settings));
     await tester.pumpAndSettle();
 
     expect(
@@ -39,7 +40,7 @@ void main() {
       isFalse,
     );
 
-    await tester.tap(find.text('Dark theme'));
+    await tester.tap(find.text('Endrika maizina'));
     await tester.pumpAndSettle();
 
     expect(store.themeMode, ThemeMode.dark);
@@ -48,7 +49,7 @@ void main() {
       ThemeMode.dark,
     );
     expect(
-      Theme.of(tester.element(find.text('Settings'))).brightness,
+      Theme.of(tester.element(find.text('Endrika maizina'))).brightness,
       Brightness.dark,
     );
   });

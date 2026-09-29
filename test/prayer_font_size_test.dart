@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vavaka/copy.dart';
 import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/font_size_store.dart';
+import 'package:vavaka/data/prayer_lists.dart';
 import 'package:vavaka/data/prayer_repository.dart';
+import 'package:vavaka/data/recent_store.dart';
 import 'package:vavaka/screens/prayer_detail_screen.dart';
 
 class _MemoryFontSizeStore implements FontSizeStore {
@@ -39,7 +42,8 @@ Future<void> _pumpReader(
     MaterialApp(
       home: PrayerDetailScreen(
         repository: PrayerRepository(),
-        bookmarkStore: SharedPreferencesBookmarkStore(),
+        bookmarks: Bookmarks(SharedPreferencesBookmarkStore()),
+        recentPrayers: RecentPrayers(SharedPreferencesRecentStore()),
         fontSizeStore: fontSizeStore,
         prayerId: 'ankizy-01',
       ),
@@ -57,7 +61,7 @@ void main() {
 
     expect(find.textContaining('fanaovanjiro hanazava'), findsNothing);
     final increaseButton = find.ancestor(
-      of: find.byTooltip('Increase text size'),
+      of: find.byTooltip(Copy.increaseTextSize),
       matching: find.byType(IconButton),
     );
     expect(tester.widget<IconButton>(increaseButton).onPressed, isNull);
@@ -69,7 +73,7 @@ void main() {
     final paragraph = find.textContaining('fanaovanjiro hanazava');
     expect(tester.widget<Text>(paragraph).style?.fontSize, 24.0);
 
-    await tester.tap(find.byTooltip('Increase text size'));
+    await tester.tap(find.byTooltip(Copy.increaseTextSize));
     await tester.pump();
     expect(tester.widget<Text>(paragraph).style?.fontSize, 26.0);
     expect(store.savedValues, [26.0]);
@@ -81,5 +85,18 @@ void main() {
     final reopenedParagraph = find.textContaining('fanaovanjiro hanazava');
     expect(tester.widget<Text>(reopenedParagraph).style?.fontSize, 26.0);
     expect(store.savedValues, [26.0]);
+
+    store.fontSize = 31;
+    await tester.pumpWidget(const SizedBox());
+    await _pumpReader(tester, store);
+    await tester.pumpAndSettle();
+    expect(tester.widget<Text>(reopenedParagraph).style?.fontSize, 31);
+    await tester.tap(find.byTooltip(Copy.increaseTextSize));
+    await tester.pump();
+    expect(store.savedValues.last, FontSizeStore.maximumFontSize);
+    expect(
+      tester.widget<Text>(reopenedParagraph).style?.fontSize,
+      FontSizeStore.maximumFontSize,
+    );
   });
 }

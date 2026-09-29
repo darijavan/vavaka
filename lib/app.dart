@@ -4,20 +4,31 @@ import 'package:go_router/go_router.dart';
 
 import 'data/bookmark_store.dart';
 import 'data/font_size_store.dart';
+import 'data/prayer_lists.dart';
 import 'data/prayer_repository.dart';
+import 'data/notification_scheduler.dart';
 import 'data/prayer_sharer.dart';
+import 'data/recent_store.dart';
+import 'data/reminders.dart';
 import 'data/theme_mode_store.dart';
 import 'screens/category_detail_screen.dart';
 import 'screens/category_list_screen.dart';
 import 'screens/prayer_detail_screen.dart';
+import 'screens/reminders_screen.dart';
+import 'screens/saved_prayers_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/settings_screen.dart';
+import 'theme.dart';
+import 'widgets/split_view.dart';
 
 class MyApp extends HookWidget {
   const MyApp({
     super.key,
     this.repository,
     this.bookmarkStore,
+    this.recentStore,
+    this.reminderStore,
+    this.reminderScheduler,
     this.fontSizeStore,
     this.themeModeStore,
     this.prayerSharer,
@@ -26,6 +37,9 @@ class MyApp extends HookWidget {
 
   final PrayerRepository? repository;
   final BookmarkStore? bookmarkStore;
+  final RecentStore? recentStore;
+  final ReminderStore? reminderStore;
+  final ReminderScheduler? reminderScheduler;
   final FontSizeStore? fontSizeStore;
   final ThemeModeStore? themeModeStore;
   final PrayerSharer? prayerSharer;
@@ -37,14 +51,36 @@ class MyApp extends HookWidget {
       () => repository ?? PrayerRepository(),
       [repository],
     );
-    final resolvedBookmarkStore = useMemoized(
-      () => bookmarkStore ?? SharedPreferencesBookmarkStore(),
+    final bookmarks = useMemoized(
+      () => Bookmarks(bookmarkStore ?? SharedPreferencesBookmarkStore()),
       [bookmarkStore],
     );
+    useEffect(() => bookmarks.dispose, [bookmarks]);
+    final recentPrayers = useMemoized(
+      () => RecentPrayers(recentStore ?? SharedPreferencesRecentStore()),
+      [recentStore],
+    );
+    useEffect(() => recentPrayers.dispose, [recentPrayers]);
+    final reminders = useMemoized(
+      () => Reminders(
+        reminderStore ?? SharedPreferencesReminderStore(),
+        reminderScheduler ?? LocalNotificationScheduler(),
+      ),
+      [reminderStore, reminderScheduler],
+    );
+    useEffect(() => reminders.dispose, [reminders]);
     final resolvedFontSizeStore = useMemoized(
       () => fontSizeStore ?? SharedPreferencesFontSizeStore(),
       [fontSizeStore],
     );
+    final readerFontSize = useState<double?>(null);
+    useEffect(() {
+      var active = true;
+      resolvedFontSizeStore.loadFontSize().then((value) {
+        if (active) readerFontSize.value = value;
+      });
+      return () => active = false;
+    }, [resolvedFontSizeStore]);
     final resolvedThemeModeStore = useMemoized(
       () => themeModeStore ?? SharedPreferencesThemeModeStore(),
       [themeModeStore],
@@ -53,14 +89,12 @@ class MyApp extends HookWidget {
     useEffect(() {
       var active = true;
       resolvedThemeModeStore.loadThemeMode().then((value) {
-        if (active) {
-          themeMode.value = value;
-        }
+        if (active) themeMode.value = value;
       });
       return () => active = false;
     }, [resolvedThemeModeStore]);
     final resolvedPrayerSharer = useMemoized(
-      () => prayerSharer ?? PlatformPrayerSharer(),
+      () => prayerSharer ?? const PlatformPrayerSharer(),
       [prayerSharer],
     );
     final router = useMemoized(
@@ -68,55 +102,115 @@ class MyApp extends HookWidget {
         initialLocation: initialLocation,
         overridePlatformDefaultLocation: true,
         routes: [
-          GoRoute(
-            path: '/',
-            builder: (context, state) => CategoryListScreen(
-              repository: resolvedRepository,
-              fontSizeStore: resolvedFontSizeStore,
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, shell) => AdaptiveShell(
+              shell: shell,
+              readerBuilder: (prayerId) => PrayerDetailScreen(
+                key: ValueKey(prayerId),
+                repository: resolvedRepository,
+                bookmarks: bookmarks,
+                recentPrayers: recentPrayers,
+                fontSizeStore: resolvedFontSizeStore,
+                sharedFontSize: readerFontSize,
+                prayerSharer: resolvedPrayerSharer,
+                prayerId: prayerId,
+                embedded: true,
+              ),
             ),
-            routes: [
-              GoRoute(
-                path: 'categories/:slug',
-                builder: (context, state) => CategoryDetailScreen(
-                  repository: resolvedRepository,
-                  slug: state.pathParameters['slug']!,
-                ),
+            branches: [
+              StatefulShellBranch(
                 routes: [
                   GoRoute(
-                    path: 'prayers/:id',
-                    builder: (context, state) => PrayerDetailScreen(
+                    path: '/',
+                    builder: (context, state) =>
+                        CategoryListScreen(repository: resolvedRepository),
+                    routes: [
+                      GoRoute(
+                        path: 'categories/:slug',
+                        builder: (context, state) => CategoryDetailScreen(
+                          repository: resolvedRepository,
+                          bookmarks: bookmarks,
+                          slug: state.pathParameters['slug']!,
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'search',
+                        builder: (context, state) => SearchScreen(
+                          repository: resolvedRepository,
+                          bookmarks: bookmarks,
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'settings',
+                        builder: (context, state) => SettingsScreen(
+                          fontSizeStore: resolvedFontSizeStore,
+                          sharedFontSize: readerFontSize,
+                          themeMode: themeMode,
+                          onThemeModeChanged: (value) {
+                            themeMode.value = value;
+                            resolvedThemeModeStore.saveThemeMode(value);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/favorites',
+                    builder: (context, state) => FavoritesScreen(
                       repository: resolvedRepository,
-                      bookmarkStore: resolvedBookmarkStore,
-                      fontSizeStore: resolvedFontSizeStore,
-                      prayerSharer: resolvedPrayerSharer,
-                      prayerId: state.pathParameters['id']!,
+                      bookmarks: bookmarks,
                     ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/recent',
+                    builder: (context, state) => RecentScreen(
+                      repository: resolvedRepository,
+                      bookmarks: bookmarks,
+                      recentPrayers: recentPrayers,
+                    ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/reminders',
+                    builder: (context, state) =>
+                        RemindersScreen(reminders: reminders),
                   ),
                 ],
               ),
             ],
           ),
+          // Outside the shell: the reader replaces the tab bar with its own
+          // font-size bar, as in the Figma "Prayer Reader" frames.
           GoRoute(
-            path: '/search',
-            builder: (context, state) =>
-                SearchScreen(repository: resolvedRepository),
-          ),
-          GoRoute(
-            path: '/settings',
-            builder: (context, state) => SettingsScreen(
+            path: '/prayers/:id',
+            builder: (context, state) => PrayerDetailScreen(
+              repository: resolvedRepository,
+              bookmarks: bookmarks,
+              recentPrayers: recentPrayers,
               fontSizeStore: resolvedFontSizeStore,
-              themeMode: themeMode.value,
-              onThemeModeChanged: (value) {
-                themeMode.value = value;
-                resolvedThemeModeStore.saveThemeMode(value);
-              },
+              sharedFontSize: readerFontSize,
+              prayerSharer: resolvedPrayerSharer,
+              prayerId: state.pathParameters['id']!,
             ),
           ),
         ],
       ),
       [
         resolvedRepository,
-        resolvedBookmarkStore,
+        bookmarks,
+        recentPrayers,
+        reminders,
         resolvedFontSizeStore,
         resolvedThemeModeStore,
         resolvedPrayerSharer,
@@ -124,24 +218,15 @@ class MyApp extends HookWidget {
       ],
     );
     useEffect(() => router.dispose, [router]);
+    final lightTheme = useMemoized(() => buildVavakaTheme(Brightness.light));
+    final darkTheme = useMemoized(() => buildVavakaTheme(Brightness.dark));
 
     return MaterialApp.router(
       title: 'Vavaka',
+      debugShowCheckedModeBanner: false,
       themeMode: themeMode.value,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.light,
-        ),
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.dark,
-        ),
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
       routerConfig: router,
     );
   }

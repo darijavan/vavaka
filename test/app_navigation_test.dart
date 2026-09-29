@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vavaka/copy.dart';
 import 'package:vavaka/app.dart';
+import 'package:vavaka/data/bookmark_store.dart';
 import 'package:vavaka/data/models/prayer.dart';
 import 'package:vavaka/data/models/prayer_category.dart';
+import 'package:vavaka/data/prayer_lists.dart';
 import 'package:vavaka/data/prayer_repository.dart';
 import 'package:vavaka/screens/category_detail_screen.dart';
 import 'package:vavaka/screens/category_list_screen.dart';
@@ -46,7 +49,9 @@ class _SearchRepository extends PrayerRepository {
   ];
 
   @override
-  Future<List<Prayer>> loadAllPrayers() => Future.value(prayers);
+  Future<List<PrayerCategory>> loadCategories() => Future.value([
+    PrayerCategory(slug: 'isanandro', name: 'Isanandro', prayers: prayers),
+  ]);
 }
 
 Future<void> pumpUntil(WidgetTester tester, Finder finder) async {
@@ -77,20 +82,21 @@ void main() {
 
     expect(find.text('Ankizy'), findsWidgets);
     expect(prayerTile, findsOneWidget);
-    expect(find.text("'Abdu'l-Bahá"), findsWidgets);
+    expect(find.textContaining("'Abdu'l-Bahá · 22 teny"), findsWidgets);
 
     await tester.tap(prayerTile);
     await pumpUntil(tester, find.textContaining('fanaovanjiro hanazava'));
+    await tester.pumpAndSettle();
 
     expect(find.textContaining('Ry Andriamanitro! Tariho aho'), findsWidgets);
-    expect(find.text("'Abdu'l-Bahá"), findsWidgets);
+    expect(find.text("— 'Abdu'l-Bahá"), findsOneWidget);
     expect(find.textContaining('fanaovanjiro hanazava'), findsOneWidget);
 
     final paragraph = find.textContaining('fanaovanjiro hanazava');
     Text paragraphText() => tester.widget<Text>(paragraph);
 
     expect(paragraphText().style?.fontSize, 18);
-    final increaseButton = find.byTooltip('Increase text size');
+    final increaseButton = find.byTooltip(Copy.increaseTextSize);
     await tester.ensureVisible(increaseButton);
     await tester.tap(increaseButton);
     await tester.pump();
@@ -101,11 +107,8 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(MyApp(repository: _SearchRepository()));
-    await tester.tap(find.byTooltip('Search prayers'));
-    await pumpUntil(
-      tester,
-      find.text('Enter a word or phrase to search prayers.'),
-    );
+    await tester.tap(find.byTooltip(Copy.searchPrayers));
+    await pumpUntil(tester, find.text(Copy.searchPrompt));
 
     await tester.enterText(find.byType(TextField), 'vAvAkA');
     await tester.pump();
@@ -125,7 +128,8 @@ void main() {
         .where((span) => span.style?.fontWeight == FontWeight.bold)
         .map((span) => span.text)
         .toList();
-    expect(highlighted, ['Vavaka', 'VAVAKA', 'vavaka']);
+    expect(highlighted, ['Vavaka']);
+    expect(find.text('VALINY 1'), findsOneWidget);
 
     await tester.tap(find.text('Vavaka maraina'));
     await pumpUntil(tester, find.textContaining('Hazavao ny foko'));
@@ -141,7 +145,7 @@ void main() {
     );
     await pumpUntil(tester, find.textContaining('Temporary asset failure'));
 
-    await tester.tap(find.text('Try again'));
+    await tester.tap(find.text(Copy.retry));
     await pumpUntil(tester, find.text('Loaded categories'));
 
     expect(repository.attempts, 2);
@@ -153,6 +157,7 @@ void main() {
       MaterialApp(
         home: CategoryDetailScreen(
           repository: _MissingCategoryRepository(),
+          bookmarks: Bookmarks(SharedPreferencesBookmarkStore()),
           slug: 'does-not-exist',
         ),
       ),
