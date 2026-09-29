@@ -20,6 +20,7 @@ class PrayerDetailScreen extends HookWidget {
     required this.bookmarks,
     required this.recentPrayers,
     required this.fontSizeStore,
+    this.sharedFontSize,
     this.prayerSharer = const PlatformPrayerSharer(),
     required this.prayerId,
     this.embedded = false,
@@ -29,6 +30,7 @@ class PrayerDetailScreen extends HookWidget {
   final Bookmarks bookmarks;
   final RecentPrayers recentPrayers;
   final FontSizeStore fontSizeStore;
+  final ValueNotifier<double?>? sharedFontSize;
   final PrayerSharer prayerSharer;
   final String prayerId;
 
@@ -39,7 +41,9 @@ class PrayerDetailScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = useState<double?>(null);
+    final localFontSize = useState<double?>(null);
+    final fontSize = sharedFontSize ?? localFontSize;
+    useValueListenable(fontSize);
     final isSharing = useState(false);
     final future = useMemoized(() => repository.findPrayerById(prayerId), [
       repository,
@@ -63,12 +67,13 @@ class PrayerDetailScreen extends HookWidget {
       return null;
     }, [prayer]);
     useEffect(() {
+      if (sharedFontSize != null) return null;
       var active = true;
       fontSizeStore.loadFontSize().then((value) {
         if (active) fontSize.value = value;
       });
       return () => active = false;
-    }, [fontSizeStore]);
+    }, [fontSizeStore, sharedFontSize]);
 
     Future<void> share(Prayer prayer) async {
       isSharing.value = true;
@@ -88,7 +93,9 @@ class PrayerDetailScreen extends HookWidget {
     }
 
     void changeFontSize(double delta) {
-      final nextValue = fontSize.value! + delta;
+      final nextValue = (fontSize.value! + delta)
+          .clamp(FontSizeStore.minimumFontSize, FontSizeStore.maximumFontSize)
+          .toDouble();
       fontSize.value = nextValue;
       fontSizeStore.saveFontSize(nextValue);
     }

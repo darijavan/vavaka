@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vavaka/app.dart';
+import 'package:vavaka/copy.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -47,5 +49,30 @@ void main() {
 
     expect(find.textContaining('Beazo ireto zaza'), findsNothing);
     expect(find.textContaining('fanaovanjiro hanazava'), findsOneWidget);
+  });
+
+  testWidgets('settings slider updates an open tablet reader', (tester) async {
+    tester.view.physicalSize = const Size(1194, 834);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(const MyApp(initialLocation: '/categories/ankizy'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('Tariho aho').first);
+    await tester.pumpAndSettle();
+
+    final paragraph = find.textContaining('fanaovanjiro hanazava');
+    expect(tester.widget<Text>(paragraph).style?.fontSize, 18);
+
+    await tester.tap(find.byIcon(Icons.menu_book_outlined));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip(Copy.settings));
+    await tester.pumpAndSettle();
+    await tester.drag(find.byType(Slider), const Offset(100, 0));
+    await tester.pumpAndSettle();
+
+    final size = tester.widget<Slider>(find.byType(Slider)).value;
+    expect(size, isNot(18));
+    expect(tester.widget<Text>(paragraph).style?.fontSize, size);
   });
 }

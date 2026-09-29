@@ -33,6 +33,8 @@ void main() {
 
     expect(find.text('Haben’ny soratra'), findsOneWidget);
     expect(find.text('24'), findsOneWidget);
+    final preview = find.text('Ry Andriamanitro!');
+    expect(tester.widget<Text>(preview).style?.fontSize, 24);
 
     final slider = tester.widget<Slider>(find.byType(Slider));
     expect(slider.min, FontSizeStore.minimumFontSize);
@@ -43,6 +45,10 @@ void main() {
 
     expect(store.savedValues, isNotEmpty);
     expect(store.savedValues.last, isNot(24));
+    expect(
+      tester.widget<Text>(preview).style?.fontSize,
+      store.savedValues.last,
+    );
     expect(
       find.text(store.savedValues.last.round().toString()),
       findsOneWidget,

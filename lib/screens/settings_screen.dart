@@ -14,24 +14,29 @@ class SettingsScreen extends HookWidget {
   const SettingsScreen({
     super.key,
     required this.fontSizeStore,
+    this.sharedFontSize,
     required this.themeMode,
     required this.onThemeModeChanged,
   });
 
   final FontSizeStore fontSizeStore;
+  final ValueNotifier<double?>? sharedFontSize;
   final ValueListenable<ThemeMode> themeMode;
   final ValueChanged<ThemeMode> onThemeModeChanged;
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = useState<double?>(null);
+    final localFontSize = useState<double?>(null);
+    final fontSize = sharedFontSize ?? localFontSize;
+    useValueListenable(fontSize);
     useEffect(() {
+      if (sharedFontSize != null) return null;
       var active = true;
       fontSizeStore.loadFontSize().then((value) {
         if (active) fontSize.value = value;
       });
       return () => active = false;
-    }, [fontSizeStore]);
+    }, [fontSizeStore, sharedFontSize]);
     final isDark = useValueListenable(themeMode) == ThemeMode.dark;
     final colors = VavakaColors.of(context);
     final rowStyle = VavakaText.callout.copyWith(color: colors.text);
@@ -94,6 +99,17 @@ class SettingsScreen extends HookWidget {
                           fontSize.value = value;
                           fontSizeStore.saveFontSize(value);
                         },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                        child: Text(
+                          'Ry Andriamanitro!',
+                          style: TextStyle(
+                            fontFamily: readingFont,
+                            fontSize: fontSize.value!,
+                            color: colors.readerText,
+                          ),
+                        ),
                       ),
                     ],
                   ),

@@ -85,5 +85,18 @@ void main() {
     final reopenedParagraph = find.textContaining('fanaovanjiro hanazava');
     expect(tester.widget<Text>(reopenedParagraph).style?.fontSize, 26.0);
     expect(store.savedValues, [26.0]);
+
+    store.fontSize = 31;
+    await tester.pumpWidget(const SizedBox());
+    await _pumpReader(tester, store);
+    await tester.pumpAndSettle();
+    expect(tester.widget<Text>(reopenedParagraph).style?.fontSize, 31);
+    await tester.tap(find.byTooltip(Copy.increaseTextSize));
+    await tester.pump();
+    expect(store.savedValues.last, FontSizeStore.maximumFontSize);
+    expect(
+      tester.widget<Text>(reopenedParagraph).style?.fontSize,
+      FontSizeStore.maximumFontSize,
+    );
   });
 }

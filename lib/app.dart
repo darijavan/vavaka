@@ -73,6 +73,14 @@ class MyApp extends HookWidget {
       () => fontSizeStore ?? SharedPreferencesFontSizeStore(),
       [fontSizeStore],
     );
+    final readerFontSize = useState<double?>(null);
+    useEffect(() {
+      var active = true;
+      resolvedFontSizeStore.loadFontSize().then((value) {
+        if (active) readerFontSize.value = value;
+      });
+      return () => active = false;
+    }, [resolvedFontSizeStore]);
     final resolvedThemeModeStore = useMemoized(
       () => themeModeStore ?? SharedPreferencesThemeModeStore(),
       [themeModeStore],
@@ -103,6 +111,7 @@ class MyApp extends HookWidget {
                 bookmarks: bookmarks,
                 recentPrayers: recentPrayers,
                 fontSizeStore: resolvedFontSizeStore,
+                sharedFontSize: readerFontSize,
                 prayerSharer: resolvedPrayerSharer,
                 prayerId: prayerId,
                 embedded: true,
@@ -135,6 +144,7 @@ class MyApp extends HookWidget {
                         path: 'settings',
                         builder: (context, state) => SettingsScreen(
                           fontSizeStore: resolvedFontSizeStore,
+                          sharedFontSize: readerFontSize,
                           themeMode: themeMode,
                           onThemeModeChanged: (value) {
                             themeMode.value = value;
@@ -189,6 +199,7 @@ class MyApp extends HookWidget {
               bookmarks: bookmarks,
               recentPrayers: recentPrayers,
               fontSizeStore: resolvedFontSizeStore,
+              sharedFontSize: readerFontSize,
               prayerSharer: resolvedPrayerSharer,
               prayerId: state.pathParameters['id']!,
             ),
