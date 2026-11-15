@@ -32,7 +32,11 @@ class Prayer {
   List<String> get paragraphs => content.paragraphs;
 
   String get plainText => content.plainText;
+
+  int get wordCount => plainText.trim().split(_whitespace).length;
 }
+
+final _whitespace = RegExp(r'\s+');
 
 class PrayerContent {
   PrayerContent({required this.schema, required List<String> paragraphs})

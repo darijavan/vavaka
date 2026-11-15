@@ -1,24 +1,36 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 
-import '../data/models/prayer.dart';
+import '../copy.dart';
+import '../data/models/prayer_category.dart';
+import '../data/prayer_lists.dart';
 import '../data/prayer_repository.dart';
+import '../theme.dart';
+import '../widgets/empty_state.dart';
 import '../widgets/error_message.dart';
+import '../widgets/prayer_row.dart';
+import '../widgets/section_label.dart';
+import '../widgets/split_view.dart';
+import '../widgets/vavaka_app_bar.dart';
+import 'dart:async';
 
 class SearchScreen extends HookWidget {
-  const SearchScreen({super.key, required this.repository});
+  const SearchScreen({
+    super.key,
+    required this.repository,
+    required this.bookmarks,
+  });
 
   final PrayerRepository repository;
+  final Bookmarks bookmarks;
 
   @override
   Widget build(BuildContext context) {
-    final controller = useTextEditingController();
     final query = useState('');
     final debouncedQuery = useState('');
-    final future = useMemoized(repository.loadAllPrayers, [repository]);
+    final snapshot = useFuture(
+      useMemoized(repository.loadCategories, [repository]),
+    );
     useEffect(() {
       final timer = Timer(
         const Duration(milliseconds: 300),
@@ -26,86 +38,45 @@ class SearchScreen extends HookWidget {
       );
       return timer.cancel;
     }, [query.value]);
+    final colors = VavakaColors.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Search')),
+      appBar: VavakaAppBar(
+        leading: BackAction(onPressed: () => Navigator.maybePop(context)),
+      ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: TextField(
-              controller: controller,
               autofocus: true,
-              decoration: const InputDecoration(
-                hintText: 'Search prayers',
-                prefixIcon: Icon(Icons.search),
+              style: VavakaText.callout.copyWith(color: colors.text),
+              decoration: InputDecoration(
+                hintText: Copy.searchPrayers,
+                hintStyle: TextStyle(color: colors.textMuted),
+                prefixIcon: Icon(Icons.search, color: colors.textMuted),
+                filled: true,
+                fillColor: colors.surfaceRaised,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
               ),
               onChanged: (value) => query.value = value,
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<Prayer>>(
-              future: future,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return ErrorMessage(error: snapshot.error!);
-                }
-                if (!snapshot.hasData) {
-                  return const Center(child: Text('Loading…'));
-                }
-
-                final normalizedQuery = debouncedQuery.value
-                    .trim()
-                    .toLowerCase();
-                if (normalizedQuery.isEmpty) {
-                  return const Center(
-                    child: Text('Enter a word or phrase to search prayers.'),
-                  );
-                }
-
-                final matches = snapshot.data!.where((prayer) {
-                  return prayer.title.toLowerCase().contains(normalizedQuery) ||
-                      prayer.author.toLowerCase().contains(normalizedQuery) ||
-                      prayer.plainText.toLowerCase().contains(normalizedQuery);
-                }).toList();
-                if (matches.isEmpty) {
-                  return const Center(child: Text('No prayers found.'));
-                }
-
-                return ListView.separated(
-                  itemCount: matches.length,
-                  separatorBuilder: (context, index) =>
-                      const Divider(height: 1),
-                  itemBuilder: (context, index) {
-                    final prayer = matches[index];
-                    return ListTile(
-                      title: _HighlightedText(
-                        text: prayer.title,
-                        query: normalizedQuery,
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _HighlightedText(
-                            text: prayer.author,
-                            query: normalizedQuery,
-                          ),
-                          _HighlightedText(
-                            text: prayer.plainText,
-                            query: normalizedQuery,
-                            maxLines: 2,
-                          ),
-                        ],
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => context.go(
-                        '/categories/${prayer.category}/prayers/${prayer.id}',
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+            child: switch (snapshot) {
+              AsyncSnapshot(:final error?) => ErrorMessage(error: error),
+              AsyncSnapshot(data: final List<PrayerCategory> categories) =>
+                _Results(
+                  categories: categories,
+                  bookmarks: bookmarks,
+                  query: debouncedQuery.value.trim().toLowerCase(),
+                ),
+              _ => const SizedBox.shrink(),
+            },
           ),
         ],
       ),
@@ -113,44 +84,52 @@ class SearchScreen extends HookWidget {
   }
 }
 
-class _HighlightedText extends StatelessWidget {
-  const _HighlightedText({
-    required this.text,
+class _Results extends StatelessWidget {
+  const _Results({
+    required this.categories,
+    required this.bookmarks,
     required this.query,
-    this.maxLines,
   });
 
-  final String text;
+  final List<PrayerCategory> categories;
+  final Bookmarks bookmarks;
   final String query;
-  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
-    final normalizedText = text.toLowerCase();
-    final spans = <TextSpan>[];
-    var start = 0;
-    while (true) {
-      final match = normalizedText.indexOf(query, start);
-      if (match == -1) {
-        spans.add(TextSpan(text: text.substring(start)));
-        break;
-      }
-      if (match > start) {
-        spans.add(TextSpan(text: text.substring(start, match)));
-      }
-      spans.add(
-        TextSpan(
-          text: text.substring(match, match + query.length),
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      );
-      start = match + query.length;
+    if (query.isEmpty) {
+      return const EmptyState(icon: Icons.search, message: Copy.searchPrompt);
     }
 
-    return Text.rich(
-      TextSpan(children: spans),
-      maxLines: maxLines,
-      overflow: maxLines == null ? null : TextOverflow.ellipsis,
+    final matches = [
+      for (final category in categories)
+        for (final prayer in category.prayers)
+          if (prayer.title.toLowerCase().contains(query) ||
+              prayer.author.toLowerCase().contains(query) ||
+              prayer.plainText.toLowerCase().contains(query))
+            (prayer, category.name),
+    ];
+    if (matches.isEmpty) {
+      return const EmptyState(icon: Icons.search_off, message: Copy.noResults);
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      itemCount: matches.length + 1,
+      separatorBuilder: (context, index) => index == 0
+          ? const SizedBox(height: 8)
+          : const Divider(height: 1, indent: 8, endIndent: 8),
+      itemBuilder: (context, index) {
+        if (index == 0) return SectionLabel('Valiny ${matches.length}');
+        final (prayer, categoryName) = matches[index - 1];
+        return PrayerRow(
+          prayer: prayer,
+          bookmarks: bookmarks,
+          categoryName: categoryName,
+          highlight: query,
+          onTap: () => openPrayer(context, prayer.id),
+        );
+      },
     );
   }
 }

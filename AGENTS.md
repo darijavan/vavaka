@@ -18,9 +18,16 @@ Markdown files grouped by category. This dataset is the source of truth for the 
 
 ```
 data/
+  index.json              # category + prayer index loaded by the app
   <id>-<category-slug>/   # one folder per prayer category (28 categories total)
-    README.md             # prayer texts for that category in Malagasy
-  README.md               # dataset overview
+    prayers.json          # DAST-encoded prayers consumed by the app
+    vavaka-NN.md          # source transcriptions in Malagasy
+lib/                      # Flutter app: screens/, widgets/, data/, theme.dart (design tokens)
+assets/                   # bundled fonts and the brand logo
+test/                     # widget and unit tests
+scripts/normalize.py      # regenerates prayers.json / index.json from the Markdown
+.agents/skills/           # agent skills installed via skills.sh (see skills-lock.json)
+.claude/skills/           # symlinks to .agents/skills so Claude Code loads the same skills
 AGENTS.md                 # this file — AI agent instructions (tool-agnostic)
 CLAUDE.md                 # Claude Code proxy → points to this file
 ```
@@ -68,7 +75,9 @@ the Notion task board.
   unless explicitly asked.
 - Accented Malagasy characters must be preserved correctly (encoding: UTF-8).
 - Do not generate placeholder or lorem-ipsum content.
-- Do not add tooling, dependencies, or files outside `data/` without explicit instruction.
+- Do not add tooling or dependencies without explicit instruction.
+- Install new agent skills with `npx skills add <owner/repo> --agent claude-code codex` so they land in
+  `.agents/skills` (shared) and are symlinked into `.claude/skills`.
 - Do not uninstall or modify anything on the physical Samsung device used for extraction.
 
 ---

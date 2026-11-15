@@ -23,7 +23,7 @@ workflows:
     max_build_duration: 60
     environment:
       # Keep CI on the project's pinned SDK; go_router requires Flutter >=3.38.0.
-      flutter: "3.44.1"
+      flutter: "3.44.9"
       xcode: "16.2"
       groups:
         - appstore_credentials          # pulls the App Store Connect API + cert keys
